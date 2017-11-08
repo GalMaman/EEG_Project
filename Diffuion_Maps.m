@@ -1,53 +1,28 @@
-clear; close all; 
+clear;
+close all; 
 
 dim     = 10;
 samples = 100;
-mu2     = 50*ones(10,1);
-mu3     = 100*ones(10,1);
-cov2    = 2;
-cov3    = 1;
-mat1    = randn(dim ,samples);
-mat2    = cov2.*randn(dim ,samples)+ mu2;
-mat3    = cov3.*randn(dim ,samples)+ mu3;
-mrg_mat = [mat1(:); mat2(:) ; mat3(:)];
-epsilon = 4;
+mu2     = 1  * ones(10,1);
+mu3     = 2 * ones(10,1);
+mat1    = randn(dim, samples);
+mat2    = randn(dim, samples) + mu2;
+mat3    = randn(dim, samples) + mu3;
+
+%%
+vLabel  = [1 * ones(samples, 1);
+           2 * ones(samples, 1);
+           3 * ones(samples, 1)];
+mrg_mat = [mat1, mat2, mat3];
+figure; scatter3(mrg_mat(1,:), mrg_mat(2,:), mrg_mat(3,:), 100, vLabel, 'Fill');
+% mrg_mat = mrg_mat(:, randperm(size(mrg_mat, 2)));
 
 %% building matrices K, D, P
-dis_mat = squareform(pdist(mrg_mat));
-K       = zeros(size(mrg_mat,1),size(mrg_mat,1));
-for ii=1:size(mrg_mat,1)
-    for jj=1:size(mrg_mat,1)
-        K(ii,jj) = exp(-(dis_mat(ii, jj)^2)/epsilon);
-    end
-end
+dis_mat = squareform( pdist(mrg_mat') );
+epsilon = median(dis_mat(:));
+K       = exp(-dis_mat.^2 / epsilon^2);
+P       = K ./ sum(K, 2);
 
-D = zeros(size(K,2), size(K,2)); %diagonal matrix 
-for ii = 1:size(K,2)
-    D(ii, ii) = sum(K(ii,:));
-end
-
-P          = inv(D)*K;
-[V , S, W] = eig(P);
+[Psi, Lmabda] = eig(P);
 %% 
-cmp=jet(size(V,2));
-% figure()
-% scatter3(S(1,1)*V(:,1),S(2,2)*V(:,2),S(3,3)*V(:,3),15, cmp);
-% colorbar
-
-V1 = V(: ,2);
-V2 = V(:,3);
-V3 = V(:,4);
-mP1 = V1 * V1' * mrg_mat;
-mP2 = V2 * V2' * mrg_mat;
-mP3 = V3 * V3' * mrg_mat;
-figure()
-scatter3(mP1,mP2,mP3,15, cmp);
-
-V1 = V(2,:);
-V2 = V(3,:);
-V3 = V(4,:);
-mP1 = V1' * V1 * mrg_mat;
-mP2 = V2' * V2 * mrg_mat;
-mP3 = V3' * V3 * mrg_mat;
-figure()
-scatter3(mP1,mP2,mP3,15, cmp);
+figure; scatter3(Psi(:,2), Psi(:,3), Psi(:,4), 100, vLabel, 'Fill');
