@@ -11,6 +11,7 @@ mat2    = cov2.*randn(dim ,samples)+ mu2;
 mat3    = cov3.*randn(dim ,samples)+ mu3;
 mrg_mat = [mat1(:); mat2(:) ; mat3(:)];
 epsilon = 4;
+
 %% building matrices K, D, P
 dis_mat = squareform(pdist(mrg_mat));
 K       = zeros(size(mrg_mat,1),size(mrg_mat,1));
