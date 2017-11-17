@@ -14,7 +14,7 @@ for ii = 1: length(dat_lengths(:))
     scatter3(pca_vec(indices,1),pca_vec(indices,2),pca_vec(indices,3), 50, ...
         label(ii) * ones(1,dat_lengths(ii)), mkr_shape{mod(ii-1,stim_num)+1});
 end
-% colormap hsv;
+
 xlabel('coef_1');
 ylabel('coef_2');
 zlabel('coef_3');

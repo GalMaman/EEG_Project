@@ -11,10 +11,10 @@ mK           = exp(-(norm_squared.^2)/(2*eps^2));
 
 % Calculating the diagonal matrix D
 mD        = diag( sum(mK, 2) );
-sparse_mD = sparse(mD);     % Here's where I changed!!
+sparse_mD = sparse(mD);     
 
 % Calculating A, it's eigenvalues and eigenvectors for the diffusion
-mA            = sparse_mD \ mK;     % and here I changed as well!
+mA            = sparse_mD \ mK;     
 [mV , mE]     = eig(mA);
 eigvec        = mV(:,2:4);
 
@@ -24,21 +24,21 @@ mkr_shape = {'o','v','d','s','^','p','>','h','<'};
 stim_num  = size(legend_cell,1);
 color     = [];
 figure(); hold on;
-% if strcmp(use_label,'SVM')
+
     for ii = 1: length(dat_lengths(:))
         indices = (sum(dat_lengths(1:ii-1))+1):sum(dat_lengths(1:ii));
         scatter3(mV(indices,2),mV(indices,3),mV(indices,4), 50, ...
             label(ii) * ones(1,dat_lengths(ii)), mkr_shape{mod(ii-1,stim_num)+1});
     end
-%     colormap hsv;
+
     xlabel('\psi_2');
     ylabel('\psi_3');
     zlabel('\psi_4');
     legend(legend_cell(:), 'Interpreter', 'none', 'location','southeastoutside');
     title('Diffusion map, colored according to sick and healthy')
-% diff_title = ['Diffusion maps of: ', labels{:}];
+
 title('Diffusion map');
-% else
+
 type_label = [];
 figure(); hold on;
     for ii = 1: length(dat_lengths(:))

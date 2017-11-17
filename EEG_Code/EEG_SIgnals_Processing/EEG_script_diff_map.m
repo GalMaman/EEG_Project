@@ -47,8 +47,8 @@ for ind_subj = 1:length(pick_subj)
         temp_trials = temp_names(contains(temp_names, 'trial')); % all trials
         load_struct = cellfun(@(X) load(X, 'tmp_row_cov'), temp_trials);
         data_cell{ind_stim,ind_subj}   = struct2cell(load_struct).';    % loading into cell
-        legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)}];  % updating legend
-%         legend_str(ind_subj*ind_stim, 1) = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)}];
+        legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)}];  
+                                                                              % updating legend
     end
 end
 
