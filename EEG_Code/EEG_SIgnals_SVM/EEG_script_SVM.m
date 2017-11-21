@@ -13,9 +13,23 @@ clear; clc;
 % this cell contains structs, of different names, each containing the 
 % struct named 'data_struct'. This has the description above.
 
+%% Verifying data 
+data_struct = data_cell{1}.data_struct;
+n_sick      = length(find(contains(num2cell(data_struct.subjects(:,1)), 'S')));
+if (n_sick < 2)
+    errordlg('Please choose at least two sick subjects');
+    return
+elseif (size(data_struct.subjects,1)-n_sick < 2)
+    errordlg('Please choose at least two healthy subjects');
+    return
+elseif (size(data_struct.stimulations,1) < 2)
+    errordlg('Please choose at least two stimulations');
+    return
+end
+    
 %% Preparing for SVM:
 [leftout, sick_indicator, diff_mat, pca_mat, type_vec, stim_num] = ...
-                    choose_learning_aspects(data_cell{1}.data_struct);
+                    choose_learning_aspects(data_struct);
 %% Beginning cells:
 n = size(leftout,1);
 
@@ -87,16 +101,21 @@ for ii = 1:n
     plot_decision_space(pca_SVM_gauss_model{ii}, pca_mat, 'PCA medium Gaussian SVM model');
 end
 %% saving the data
-confmats       = cell(5,6);
+confmats       = cell(n_sick,6);
 confmats(:,1)  = lin_confmat_diff;
 confmats(:,2)  = cub_confmat_diff;
 confmats(:,3)  = gauss_confmat_diff;
 confmats(:,4)  = lin_confmat_pca;
 confmats(:,5)  = cub_confmat_pca;
 confmats(:,6)  = gauss_confmat_pca;
+sick_array     = strings(1,n_sick);
+for ii = 1:n_sick
+    sick_array(1,ii) = sprintf('S%d_out',ii);
+end
+
 confmats_table = cell2table(confmats, 'VariableNames', {'linear_diff',...
     'cubic_diff', 'gaussian_diff', 'linear_pca', 'cubic_pca', 'gaussian_pca'},...
-    'RowNames', {'S1_out', 'S2_out', 'S3_out', 'S4_out', 'S5_out'});
+    'RowNames', cellstr(sick_array));
 prompt={'Enter save destination directory:', 'Choose filename:'};
 dir_title   = 'save';
 dest_cell   = inputdlg(prompt,dir_title);
