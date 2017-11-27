@@ -14,6 +14,7 @@ try
     diff_features = data_struct.diffusion_matrix(:,2:4);
 catch ME
     diff_mat      = [];
+    diff_features =[];
 end
 if size(diff_features)
     diff_mat   = [diff_features, type_vec, sick_vec'];

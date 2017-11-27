@@ -15,6 +15,8 @@ for ii = 1:N
         mkdir(stim_str , 'good_data');  % data with only good electrodes
         mkdir(stim_str , 'cov');        % cov matrices
         mkdir(stim_str , 'distances');  % distances from means
+        mkdir(stim_str , 'bad_electrodes');  % distances from means
+        
     end
 end
         
