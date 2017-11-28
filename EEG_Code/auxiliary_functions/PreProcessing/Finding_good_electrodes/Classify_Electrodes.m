@@ -12,6 +12,7 @@ allnames = {allfiles.name}.';
 M = length(allnames);
 
 bad_trials = zeros(electrodes_num, M);
+bad_electrodes = zeros(electrodes_num, M);
 trials_names = cell(M,1);
         
 good_str   = contains(allnames,'trial');
@@ -52,13 +53,15 @@ for kk=1:M
         trials_names{counter} = allnames{kk};
         
         % Searching for the bad electrodes
-        bad_electrodes = bad_electrodes + (tmp_bad_electrodes >= floor(percent_trial * trial_len));
+        bad_electrodes(:, counter) = bad_electrodes(:, counter) + (tmp_bad_electrodes >= floor(percent_trial * trial_len));
     end
 end
-cd([stim_src_str, '\bad_electrodes'])
-save('bad_elec.mat', 'bad_trials')
+
 % Finding the good electrodes
-tmp_good_elec = find(bad_electrodes <= floor(percent_stim * counter));
+tmp_good_elec = find(sum(bad_electrodes,2) <= floor(percent_stim * counter));
+bad_electrodes(tmp_good_elec,:) = 0;
+cd([stim_src_str, '\bad_electrodes'])
+save('bad_elec.mat', 'bad_electrodes')
 
 cd([stim_src_str, '\clean'])
 bad_trials = bad_trials(tmp_good_elec, (1:counter));
