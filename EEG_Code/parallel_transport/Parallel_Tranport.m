@@ -15,26 +15,26 @@ for jj = 1:num_of_subj
     [rows, cols]       = size(cov_cell{1,jj}{1});
     cov_3Dmat{1,jj}    = zeros(rows, cols,M);
     for kk = 1: M
-        cov_3Dmat{1,jj}(:, :, kk) =  cov_cell{1,jj}{kk};
+        cov_3Dmat{1,jj}(:, :, kk) =  cov_cell{1,jj}{kk}; % 3D matrix for each subject
     end
-    mRiemannianMean               = RiemannianMean(cov_3Dmat{1,jj});
+    mRiemannianMean               = RiemannianMean(cov_3Dmat{1,jj}); %calculating riemannian mean for each subject
     RiemannianMean_3Dmat = cat(3, RiemannianMean_3Dmat, mRiemannianMean);
 end
 
 Riemannian_3Dmat = [];
-Pmean = mean(RiemannianMean_3Dmat, 3);
+Pmean = mean(RiemannianMean_3Dmat, 3); % calculating mean of all riemannian means
 for jj = 1:num_of_subj
      K  = size(cov_3Dmat{1,jj}, 3);
-     for kk = 1 : K
+     for kk = 1 : K  % performing parallel transport for all the trials
          temp = 0.5*log_mat(cov_3Dmat{1,jj}(:, :, kk), Pmean);
          temp = exp_mat(cov_3Dmat{1,jj}(:, :, kk), temp);
          temp = 2*log_mat(RiemannianMean_3Dmat(:,:,jj), temp);
-         cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp);
+         cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp); 
      end
-     Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj});
+     Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj}); 
 end
 
-% Pmean = RiemannianMean_3Dmat(:,:,1);
+% Pmean = RiemannianMean_3Dmat(:,:,1); % Pmean is the riemannian mean of the first subject
 % for jj = 2:num_of_subj
 %      K  = size(cov_3Dmat{1,jj}, 3);
 %      for kk = 1 : K
