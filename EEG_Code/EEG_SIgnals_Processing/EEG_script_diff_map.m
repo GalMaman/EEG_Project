@@ -4,7 +4,7 @@
 clear;
 clc;
 %% entering the 'edited_EEG_data' directory
-% example in Gal's:     E:\EEG_Project\Clean_EEG_data\edited_EEG_data
+% example in Gal's:     E:\EEG_Project\CleanData\edited_EEG_data
 % example in Gilad's:   E:\Gilad\Psagot\Technion\Semester6\Project1\EEG_data_files\EEG_data_edited\edited_EEG_data
 % example in Ronen's:   C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\C04\16\cov
 % example save Ronen's: C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\cov_mats_in_rows
@@ -29,40 +29,14 @@ stim_names = stims(pick_stims);
 
 %% Adding trials from chosen subjects and stims into cells
 tic
-data_cell   = cell(length(pick_stims), length(pick_subj));   % cell that will hold all cov mats of every stim and subject
-legend_cell = data_cell;    % holds the names of the stims and subjs
-legend_str  = zeros(length(pick_subj) * length(pick_stims), 1);     % the legend size - will plug in subject and stim later
-label       = zeros(length(pick_subj) * length(pick_stims), 1);      % the label for the SVM - sick = 1, healthy = 0
-for ind_subj = 1:length(pick_subj)
-    for ind_stim = 1:length(pick_stims)
-        % Gives a label of sick/not sick (1=sick):
-        label((ind_subj-1) * length(pick_stims) + ind_stim) = contains(subjs{pick_subj(ind_subj)}, "S");
-        
-        % finding cov directory of temporary subject-stim:
-        temp_dir    = [src_dir, '\', subjs{pick_subj(ind_subj)}, '\',...
-                                          stims{pick_stims(ind_stim)}, '\cov'];
-        cd(temp_dir);   % moving to cov directory for current subject and stimulation
-        temp_files  = dir(temp_dir);
-        temp_names  = {temp_files.name}.';
-        temp_trials = temp_names(contains(temp_names, 'trial')); % all trials
-        load_struct = cellfun(@(X) load(X, 'tmp_row_cov'), temp_trials);
-        data_cell{ind_stim,ind_subj}   = struct2cell(load_struct).';    % loading into cell
-        legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)}];  
-                                                                              % updating legend
-    end
-end
+[data_cell, legend_cell, legend_str, label] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims);
 
 disp('    --finished loading all trials');
 toc
 %% changing covs to matrices around common mean
-[cov_mat, dat_lengths] = cov2vec( data_cell, []);
+[cov_mat, dat_lengths, label_vec] = cov2vec( data_cell, []);
                                 % the matrix of cov-vectors
-
-label_vec = [];
-for ii = 1: length(dat_lengths(:))
-    label_vec = [label_vec; label(ii) * ones(dat_lengths(ii),1)];
-end
-
+                                
 disp('    --found Riemanien mean');
 toc
 
@@ -79,7 +53,7 @@ toc
 %% saving the data
 data_struct = struct('subjects', cell2mat(subj_names), 'stimulations', cell2mat(stim_names), ...
     'diffusion_matrix', diffusion_matrix, 'PCA_matrix', pca_vec, 'labels',...
-    label_vec, 'type_labels', type_label);
+    label_vec, 'type_labels', PCA_type_label);
 
 prompt    = {'Enter save destination directory:', 'Choose filename:'};
 dir_title = 'save';

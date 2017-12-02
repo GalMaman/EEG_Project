@@ -2,6 +2,7 @@ function mX = CovsToVecs(Covs)
 % Covs is a 3D tensor: (row,cols,N)
     mRiemannianMean = RiemannianMean(Covs);
     mCSR            = mRiemannianMean^(-1/2);
+    mSQRT           = mRiemannianMean^(1/2); 
     
     K  = size(Covs, 3);
     D  = size(Covs, 1);

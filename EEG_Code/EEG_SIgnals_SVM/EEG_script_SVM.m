@@ -22,9 +22,6 @@ if (n_sick < 2)
 elseif (size(data_struct.subjects,1)-n_sick < 2)
     errordlg('Please choose at least two healthy subjects');
     return
-% elseif (size(data_struct.stimulations,1) < 2)
-%     errordlg('Please choose at least two stimulations');
-%     return
 end
     
 %% Preparing for SVM:
