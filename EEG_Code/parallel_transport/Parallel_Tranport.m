@@ -49,10 +49,10 @@ end
 %          cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp);
 %      end
 % end
-% 
-% for jj = 1:num_of_subj 
-%          Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj});
-% end
+
+for jj = 1:num_of_subj 
+         Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj});
+end
 
 mSQRT = Pmean^(1/2);    
 mCSR  = Pmean^(-1/2);
