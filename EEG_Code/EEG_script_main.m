@@ -1,19 +1,24 @@
 %% Gilad & Ronen, mapping using diffusion maps
 % Insert the folders of the cov matrices you want to map out, and it
 % applies diffusion maps to these matrices.
-clear all;
+clear;
 clc;
+
+%%
+addpath(genpath('./'));
+
 %% entering the 'edited_EEG_data' directory
 % example in Gal's:     E:\EEG_Project\CleanData\edited_EEG_data
 % example in Gilad's:   E:\Gilad\Psagot\Technion\Semester6\Project1\EEG_data_files\EEG_data_edited\edited_EEG_data
 % example in Ronen's:   C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\C04\16\cov
 % example save Ronen's: C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\cov_mats_in_rows
 
-prompt     ={'Enter data directory'};
-dir_title  = 'data';
-src_cell   = inputdlg(prompt,dir_title);
-src_dir    = src_cell{1};
-cd(src_dir);
+% prompt     ={'Enter data directory'};
+% dir_title  = 'data';
+% src_cell   = inputdlg(prompt,dir_title);
+% src_dir    = src_cell{1};
+src_dir    = 'E:\EEG_Project\CleanData\edited_EEG_data';
+% cd(src_dir);
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
