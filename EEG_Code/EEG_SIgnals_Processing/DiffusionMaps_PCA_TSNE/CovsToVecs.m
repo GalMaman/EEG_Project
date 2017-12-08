@@ -1,6 +1,10 @@
-function mX = CovsToVecs(Covs)
+function mX = CovsToVecs(Covs, calc_mean, Riemannian_Mean)
 % Covs is a 3D tensor: (row,cols,N)
-    mRiemannianMean = RiemannianMean(Covs);
+    if calc_mean == 1
+        mRiemannianMean = RiemannianMean(Covs);
+    else
+        mRiemannianMean = Riemannian_Mean;
+    end
     mCSR            = mRiemannianMean^(-1/2);
     mSQRT           = mRiemannianMean^(1/2); 
     

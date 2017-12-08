@@ -1,13 +1,20 @@
-function [ data_cell, legend_cell, legend_str, label ] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims)
+function [ data_cell, legend_cell, legend_str,label_con,label_sub, label_st, stims_str ] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims, num_of_trials)
 
 data_cell   = cell(length(pick_stims), length(pick_subj));   % cell that will hold all cov mats of every stim and subject
 legend_cell = data_cell;    % holds the names of the stims and subjs
+stims_str   = cell(1,length(pick_stims));
 legend_str  = zeros(length(pick_subj) * length(pick_stims), 1);     % the legend size - will plug in subject and stim later
-label       = zeros(length(pick_subj) * length(pick_stims), 1);      % the label for the SVM - sick = 1, healthy = 0
+label_sub   = zeros(length(pick_subj) * length(pick_stims), 1);     % the label for the SVM -per subject
+label_st    = zeros(length(pick_subj) * length(pick_stims), 1);     % the label for the SVM -per stimulation
+label_con   = zeros(length(pick_subj) * length(pick_stims), 1);      % the label for the SVM - sick = 1, healthy = 0
+stims_ID    = {'right arm', 'left arm', 'light flash', 'Frequent tone', 'rare tone', 'sham word 1', 'Subject own name', 'sham word ', 'sham word '};
+
 for ind_subj = 1:length(pick_subj)
     for ind_stim = 1:length(pick_stims)
         % Gives a label of sick/not sick (1=sick):
-        label((ind_subj-1) * length(pick_stims) + ind_stim) = contains(subjs{pick_subj(ind_subj)}, "S");
+        label_con((ind_subj-1) * length(pick_stims) + ind_stim) = contains(subjs{pick_subj(ind_subj)}, "S");
+        label_sub((ind_subj-1) * length(pick_stims) + ind_stim) = pick_subj(ind_subj);
+        label_st((ind_subj-1) * length(pick_stims) + ind_stim) = pick_stims(ind_stim);
         
         % finding cov directory of temporary subject-stim:
         temp_dir    = [src_dir, '\', subjs{pick_subj(ind_subj)}, '\',...
@@ -16,9 +23,14 @@ for ind_subj = 1:length(pick_subj)
         temp_files  = dir(temp_dir);
         temp_names  = {temp_files.name}.';
         temp_trials = temp_names(contains(temp_names, 'trial')); % all trials
-        load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials);
+        if (num_of_trials == inf) || (num_of_trials > length(temp_trials))
+            load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials);
+        else
+            load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials(1:num_of_trials));
+        end
         data_cell{ind_stim,ind_subj}   = struct2cell(load_struct).';    % loading into cell
-        legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)}];  
+        legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];  
                                                                               % updating legend
+        stims_str{ind_stim} =  [stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];                                                                     
     end
 end

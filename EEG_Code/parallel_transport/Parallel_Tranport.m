@@ -1,4 +1,4 @@
-function [mX, dat_lengths, label_vec] = Parallel_Tranport(data_cell, directories, label)
+function [cov_mat_PT, dat_lengths, label_vec_con, label_vec_sub, label_vec_stim] = Parallel_Tranport(data_cell, directories,  label_con, label_sub, label_st)
 
 num_of_subj         = size(data_cell,2);
 cov_cell            = cell(1, num_of_subj);
@@ -6,19 +6,12 @@ cov_3Dmat           = cell(1, num_of_subj);
 dat_lengths         = zeros(size(data_cell));
 RiemannianMean_3Dmat =[];
 
-%-- TODO: Covs = cat(3, cov_data_cell{1,1}{:});!!!!!!
-
 for jj = 1 : num_of_subj
     for ii = 1 : size(data_cell, 1)
         dat_lengths(ii,jj) = length(data_cell{ii,jj});
         cov_cell{jj}       = [cov_cell{jj}; data_cell{ii,jj}];
     end
-    M                  = length(cov_cell{1,jj});
-    [rows, cols]       = size(cov_cell{1,jj}{1});
-    cov_3Dmat{1,jj}    = zeros(rows, cols,M);
-    for kk = 1: M
-        cov_3Dmat{1,jj}(:, :, kk) =  cov_cell{1,jj}{kk}; % 3D matrix for each subject
-    end
+    cov_3Dmat{1,jj} = cat(3, cov_cell{1,jj}{:});
     mRiemannianMean      = RiemannianMean(cov_3Dmat{1,jj}); %calculating riemannian mean for each subject
     RiemannianMean_3Dmat = cat(3, RiemannianMean_3Dmat, mRiemannianMean);
 end
@@ -28,56 +21,27 @@ Pmean            = mean(RiemannianMean_3Dmat, 3); % calculating mean of all riem
 for jj = 1 : num_of_subj
      K  = size(cov_3Dmat{1,jj}, 3);
      for kk = 1 : K  % performing parallel transport for all the trials
-         mC   = cov_3Dmat{1,jj}(:, :, kk);
-         
+         mC   = cov_3Dmat{1,jj}(:, :, kk); 
          temp = 0.5*log_mat(mC, Pmean);
          temp = exp_mat(mC, temp);
          temp = 2*log_mat(RiemannianMean_3Dmat(:,:,jj), temp);
          cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp); 
+
+%           cov_3Dmat{1,jj}(:, :, kk) = SchildLadder(RiemannianMean_3Dmat(:,:,jj), Pmean, mC);
          
      end
      Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj}); 
 end
 
-% Pmean = RiemannianMean_3Dmat(:,:,1); % Pmean is the riemannian mean of the first subject
-% for jj = 2:num_of_subj
-%      K  = size(cov_3Dmat{1,jj}, 3);
-%      for kk = 1 : K
-%          temp = 0.5*log_mat(cov_3Dmat{1,jj}(:, :, kk), Pmean);
-%          temp = exp_mat(cov_3Dmat{1,jj}(:, :, kk), temp);
-%          temp = 2*log_mat(RiemannianMean_3Dmat(:,:,jj), temp);
-%          cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp);
-%      end
-% end
+cov_mat_PT = CovsToVecs(Riemannian_3Dmat, 0, Pmean);
 
-for jj = 1:num_of_subj 
-         Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj});
-end
-
-mSQRT = Pmean^(1/2);    
-mCSR  = Pmean^(-1/2);
-
-K  = size(Riemannian_3Dmat, 3);
-D  = size(Riemannian_3Dmat, 1);
-D2 = D * (D + 1) / 2;
-mX = zeros(D2, K);
-
-mW = sqrt(2) * ones(D) - (sqrt(2) - 1) * eye(D);
-
-for kk = 1 : K
-%     Skk      = mSQRT*logm(mCSR * Riemannian_3Dmat(:,:,kk) * mCSR)*mSQRT .* mW;
-    Skk      = logm(mCSR * Riemannian_3Dmat(:,:,kk) * mCSR).* mW;
-    mX(:,kk) = Skk(triu(true(size(Skk))));
-end
-
-   
-mToep       = toeplitz(1:D);
-vTeop       = mToep(triu(true(size(mToep))));
-[~, vOrder] = sort(vTeop);
-mX          = mX(vOrder,:);
-
-label_vec = [];
+label_vec_con = [];
+label_vec_sub = [];
+label_vec_stim = [];
 for ii = 1: length(dat_lengths(:))
-    label_vec = [label_vec; label(ii) * ones(dat_lengths(ii),1)];
+    label_vec_con = [label_vec_con; label_con(ii) * ones(dat_lengths(ii),1)];
+    label_vec_sub = [label_vec_sub; label_sub(ii) * ones(dat_lengths(ii),1)];
+    label_vec_stim = [label_vec_stim; label_st(ii) * ones(dat_lengths(ii),1)];
 end
+
 end
