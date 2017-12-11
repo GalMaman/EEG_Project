@@ -16,7 +16,10 @@ vLabel  = [1 * ones(samples, 1);
 mrg_mat = [mat1, mat2, mat3];
 figure; scatter3(mrg_mat(1,:), mrg_mat(2,:), mrg_mat(3,:), 100, vLabel, 'Fill');
 % mrg_mat = mrg_mat(:, randperm(size(mrg_mat, 2)));
-
+xlabel('coef_1');
+ylabel('coef_2');
+zlabel('coef_3');
+title('before Diffusion Maps');
 %% building matrices K, D, P
 dis_mat = squareform( pdist(mrg_mat') );
 epsilon = median(dis_mat(:));
@@ -26,3 +29,16 @@ P       = K ./ sum(K, 2);
 [Psi, Lmabda] = eig(P);
 %% 
 figure; scatter3(Psi(:,2), Psi(:,3), Psi(:,4), 100, vLabel, 'Fill');
+xlabel('coef_1');
+ylabel('coef_2');
+zlabel('coef_3');
+title('after Diffusion Maps');
+%%
+figure; mZ = TSNE(Psi', vLabel, 2 , [], 30);
+figure; hold on;
+num_of_labels = unique(vLabel);
+for ii = 1 : length(num_of_labels)
+    scatter(mZ(find(vLabel == num_of_labels(ii)) ,1), mZ(find(vLabel == num_of_labels(ii)),2), 100, vLabel(find(vLabel == num_of_labels(ii))), 'Fill');
+
+end
+title('t-SNE map');

@@ -117,5 +117,5 @@ cd(dest_dir);
 save(filename, 'data_struct');
 
 %% preparing matrix for SVM train
-PCA_matrix = SVM_script_for_PCA(pca_vec, dat_lengths, stim_names);
+PCA_matrix = SVM_script_for_PCA(mZ, dat_lengths_PT, stim_names);
 
