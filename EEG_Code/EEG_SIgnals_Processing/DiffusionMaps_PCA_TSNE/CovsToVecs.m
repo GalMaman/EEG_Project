@@ -1,6 +1,6 @@
-function mX = CovsToVecs(Covs, calc_mean, Riemannian_Mean)
+function mX = CovsToVecs(Covs, Riemannian_Mean)
 % Covs is a 3D tensor: (row,cols,N)
-    if calc_mean == 1
+    if nargin == 1
         mRiemannianMean = RiemannianMean(Covs);
     else
         mRiemannianMean = Riemannian_Mean;

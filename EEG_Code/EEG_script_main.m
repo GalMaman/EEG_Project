@@ -45,13 +45,13 @@ disp('    --finished calculating kernel matrices');
 toc
 
 %% changing covs to matrices around common mean 
-[cov_mat, dat_lengths, label_vec_con, label_vec_sub, label_vec_stim ] = cov2vec( kernel_data_cell, [], label_con, label_sub, label_st);
+[cov_mat, dat_lengths, label_vec_con, label_vec_sub, label_vec_stim ] = cov2vec( cov_data_cell, [], label_con, label_sub, label_st);
                                 % the matrix of cov-vectors                               
 disp('    --found Riemanien mean');
 toc
 
 %% Parallel Transport
-[cov_mat_PT, dat_lengths_PT, label_vec_con_PT, label_vec_sub_PT, label_vec_stim_PT] = Parallel_Tranport(kernel_data_cell, [],  label_con, label_sub, label_st);
+[cov_mat_PT, dat_lengths_PT, label_vec_con_PT, label_vec_sub_PT, label_vec_stim_PT] = Parallel_Tranport(cov_data_cell, [],  label_con, label_sub, label_st);
 disp('    --found Riemanien mean with PT');
 toc
 

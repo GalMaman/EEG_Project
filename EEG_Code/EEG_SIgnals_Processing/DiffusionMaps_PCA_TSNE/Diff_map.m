@@ -52,7 +52,7 @@ figure(); hold on;
     ylabel('\psi_3');
     zlabel('\psi_4');
     legend(legend_cell(:), 'Interpreter', 'none', 'location','southeastoutside');
-    title('Diffusion map, colored per subject and stimulation')
+    title('Diffusion map, colored per subject and stimulus')
 
 end
 

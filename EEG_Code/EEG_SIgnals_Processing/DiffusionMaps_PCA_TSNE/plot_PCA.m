@@ -1,16 +1,15 @@
-function [ pca_vec ] = plot_PCA(vecs_in_cols, label_vec_con, label_vec_sub, label_vec_stim, subj_names, stim_names)
+function [ pca_vec, ax ] = plot_PCA(vecs_in_cols, full_label_struct, subj_names, title_str)
 % Runs PCA on the input which is the data vector, in columns as a mtrix.
 % dat_lengths is a vector containing the number of trials per experiment
 
 pca_vec = pca(vecs_in_cols);
-
 % colored according to sick and healthy
-figure(); hold on;  
-num_con = unique(label_vec_con);
+figure(); hold on; ax(1) = gca;
+num_con = unique(full_label_struct{1});
 label = cell(1, length(num_con));
 for ii = 1 : length(num_con)
-    idx = find(label_vec_con == num_con(ii));
-    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, label_vec_con(idx), 'Fill');
+    idx = find(full_label_struct{1} == num_con(ii));
+    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, full_label_struct{1}(idx), 'Fill');
     if num_con(ii) == 0
         label{ii} = 'Healty';
     else
@@ -18,36 +17,55 @@ for ii = 1 : length(num_con)
     end    
 end
 
-xlabel('coef_1');
-ylabel('coef_2');
-zlabel('coef_3');
-legend(label(:), 'Interpreter', 'none', 'location','southeastoutside');
-title('PCA map, colored according to sick and healthy');
+xlabel('$\psi_1$','Interpreter','latex');
+ylabel('$\psi_2$','Interpreter','latex');
+zlabel('$\psi_3$','Interpreter','latex');
+legend(label(:), 'Interpreter', 'latex', 'location','southeastoutside');
+title(sprintf('PCA map, colored according to sick and healthy %s', title_str),'interpreter','latex');
 
 % colored according to subjects
-figure(); hold on;  
-num_sub = unique(label_vec_sub);
+figure(); hold on; ax(2) = gca;
+num_sub = unique(full_label_struct{2});
 for ii = 1 : length(num_sub)
-    idx = find(label_vec_sub == num_sub(ii));
-    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, label_vec_sub(idx), 'Fill');  
+    idx = find(full_label_struct{2} == num_sub(ii));
+    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, full_label_struct{2}(idx), 'Fill');  
 end
 
-xlabel('coef_1');
-ylabel('coef_2');
-zlabel('coef_3');
-legend(subj_names(:), 'Interpreter', 'none', 'location','southeastoutside');
-title('PCA map, colored per subject')
+xlabel('$\psi_1$','Interpreter','latex');
+ylabel('$\psi_2$','Interpreter','latex');
+zlabel('$\psi_3$','Interpreter','latex');
+legend(subj_names(:), 'Interpreter', 'latex', 'location','southeastoutside');
+title(sprintf('PCA map, colored per subject %s', title_str),'interpreter','latex');
 
-% colored according to stimulation
-figure(); hold on;  
-num_stim = unique(label_vec_stim);
+
+% colored according to stimulus
+figure(); hold on; ax(3) = gca;
+num_stim = unique(full_label_struct{3});
 for ii = 1 : length(num_stim)
-    idx = find(label_vec_stim == num_stim(ii));
-    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, label_vec_stim(idx), 'Fill'); 
+    idx = find(full_label_struct{3} == num_stim(ii));
+    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, full_label_struct{3}(idx), 'Fill'); 
 end
+xlabel('$\psi_1$','Interpreter','latex');
+ylabel('$\psi_2$','Interpreter','latex');
+zlabel('$\psi_3$','Interpreter','latex');
+legend(full_label_struct{4}(:), 'Interpreter', 'none', 'location','southeastoutside');
+title(sprintf('PCA map, colored per stimulus %s', title_str),'interpreter','latex');
 
-xlabel('coef_1');
-ylabel('coef_2');
-zlabel('coef_3');
-legend(stim_names(:), 'Interpreter', 'none', 'location','southeastoutside');
-title('PCA map, colored per stimulation')
+% colored according to stimulus type
+label_stimulus_type(find(full_label_struct{3} < 3))  = 1;
+label_stimulus_type(find(full_label_struct{3} == 3)) = 2;
+label_stimulus_type(find(full_label_struct{3} > 3))  = 3;
+
+figure(); hold on; ax(4) = gca;
+num_type = unique(label_stimulus_type);
+type_str = {'somatosensory', 'visual', 'auditory'};
+for ii = 1 : length(num_type)
+    idx = find(label_stimulus_type == num_type(ii));
+    scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, label_stimulus_type(idx), 'Fill'); 
+end
+xlabel('$\psi_1$','Interpreter','latex');
+ylabel('$\psi_2$','Interpreter','latex');
+zlabel('$\psi_3$','Interpreter','latex');
+legend(type_str(:), 'Interpreter', 'latex', 'location','southeastoutside');
+title(sprintf('PCA map, colored per stimulus type %s', title_str),'interpreter','latex');
+set(ax,'FontSize',12)

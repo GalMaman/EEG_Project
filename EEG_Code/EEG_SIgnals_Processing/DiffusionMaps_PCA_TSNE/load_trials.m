@@ -1,4 +1,4 @@
-function [ data_cell, legend_cell, legend_str,label_con,label_sub, label_st, stims_str ] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims, num_of_trials)
+function [ data_cell, legend_cell, label_struct ] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims, num_of_trials)
 
 data_cell   = cell(length(pick_stims), length(pick_subj));   % cell that will hold all cov mats of every stim and subject
 legend_cell = data_cell;    % holds the names of the stims and subjs
@@ -34,3 +34,10 @@ for ind_subj = 1:length(pick_subj)
         stims_str{ind_stim} =  [stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];                                                                     
     end
 end
+
+label_struct = cell(5,1);
+label_struct{1} = legend_str;
+label_struct{2} = label_con;
+label_struct{3} = label_sub;
+label_struct{4} = label_st;
+label_struct{5} = stims_str;

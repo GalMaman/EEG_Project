@@ -1,4 +1,4 @@
-function [PCA_matrix] = SVM_script_for_PCA(pca_vec, dat_lengths, stims)
+function [train_data, test_data] = SVM_script_for_PCA(pca_vec, dat_lengths, full_label_struct, leave_out)
 
 pca_labels = [];
 count      = 1;
@@ -14,15 +14,8 @@ for ii = 1: length(dat_lengths(:))
     end
 end
 PCA_matrix = [pca_labels, pca_vec];
-% 
-% figure();
-% hold on;
-% for ii = 1:9
-%     ind = find(pca_labels == stim_vec(ii));
-%     scatter3(PCA_matrix(ind,2), PCA_matrix(ind,3), PCA_matrix(ind,4), 50, pca_labels(ind), 'Fill');
-% end
-% colormap;
-% xlabel('coef_1');
-% ylabel('coef_2');
-% zlabel('coef_3');
-% legend(stims(:), 'Interpreter', 'none', 'location','southeastoutside');
+idx_train  = find(full_label_struct{2} ~= leave_out);
+idx_test   = find(full_label_struct{2} == leave_out);
+train_data = PCA_matrix(idx_train,:);
+test_data  = PCA_matrix(idx_test,:);
+
