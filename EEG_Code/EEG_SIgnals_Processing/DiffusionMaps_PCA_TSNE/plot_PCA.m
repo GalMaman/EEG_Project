@@ -57,8 +57,9 @@ label_stimulus_type(find(full_label_struct{3} == 3)) = 2;
 label_stimulus_type(find(full_label_struct{3} > 3))  = 3;
 
 figure(); hold on; ax(4) = gca;
-num_type = unique(label_stimulus_type);
 type_str = {'somatosensory', 'visual', 'auditory'};
+num_type = unique(label_stimulus_type);
+type_str = type_str(num_type);
 for ii = 1 : length(num_type)
     idx = find(label_stimulus_type == num_type(ii));
     scatter3(pca_vec(idx,1), pca_vec(idx,2), pca_vec(idx,3),100, label_stimulus_type(idx), 'Fill'); 
