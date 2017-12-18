@@ -22,10 +22,10 @@ Fourier_param      = 0;
 PT_param           = 1;
 no_PT_param        = 1;
 pca_param          = 1;
-tSNE_param         = 1;
-diffMap_param      = 1;
-tSNE_diffMap_param = 1;
-num_of_trials      = 50; % to load all trials enter inf 
+tSNE_param         = 0;
+diffMap_param      = 0;
+tSNE_diffMap_param = 0;
+num_of_trials      = 100; % to load all trials enter inf 
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -191,22 +191,22 @@ end
 % save(filename, 'data_struct');
 
 %% preparing matrix for SVM train
-leave_out = 1;
-[train_data, test_data] = SVM_script_for_PCA(pca_vec, dat_lengths, full_label_struct, leave_out);
-[train_data_PT, test_data_PT] = SVM_script_for_PCA(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
+% leave_out = 1;
+% [train_data, test_data]       = SVM_script_for_PCA(pca_vec, dat_lengths, full_label_struct, leave_out);
+% [train_data_PT, test_data_PT] = SVM_script_for_PCA(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
 
 %% SVM
-[trainedClassifier, validationAccuracy] = AllSVM_trainClassifier(train_data);
-data_for_training = test_data(:,2:end);
-yfit = trainedClassifier.predictFcn(data_for_training);
-C    = confusionmat(test_data(:,1),yfit);
-figure();heatmap(C);
+% [trainedClassifier, validationAccuracy] = AllSVM_trainClassifier(train_data);
+% data_for_training = test_data(:,2:end);
+% yfit = trainedClassifier.predictFcn(data_for_training);
+% C    = confusionmat(test_data(:,1),yfit);
+% figure();heatmap(C);
 % plotconfusion(test_data(:,1),yfit);
 
 %% SVM PT
 
-[trainedClassifier_PT, validationAccuracy_PT] = AllSVM_trainClassifier(train_data_PT);
-data_for_training_PT = test_data_PT(:,2:end);
-yfit_PT = trainedClassifier_PT.predictFcn(data_for_training_PT);
-CPT    = confusionmat(test_data_PT(:,1),yfit_PT);
-figure();heatmap(CPT);
+% [trainedClassifier_PT, validationAccuracy_PT] = AllSVM_trainClassifier(train_data_PT);
+% data_for_training_PT = test_data_PT(:,2:end);
+% yfit_PT = trainedClassifier_PT.predictFcn(data_for_training_PT);
+% CPT     = confusionmat(test_data_PT(:,1),yfit_PT);
+% figure();heatmap(CPT);
