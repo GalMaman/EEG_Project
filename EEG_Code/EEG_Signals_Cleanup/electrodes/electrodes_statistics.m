@@ -2,12 +2,7 @@ clear;
 clc;
 %% entering the 'edited_EEG_data' directory
 % example in Gal's:     E:\EEG_Project\EEG_data_with_elec\edited_EEG_data
-
-prompt     ={'Enter data directory'};
-dir_title  = 'data';
-src_cell   = inputdlg(prompt,dir_title);
-src_dir    = src_cell{1};
-cd(src_dir);
+src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -68,7 +63,8 @@ all_data(all_data == 0) = NaN;
 
 
 [Y, X] = ndgrid(1:size(all_data,1), 1:size(all_data,2));
-% plot scatter
+
+%% plot scatter
 figure1 = figure;
 axes1 = axes('Parent',figure1);
 hold(axes1,'on');
@@ -82,7 +78,7 @@ grid(axes1,'on');
 set(axes1,'XTick',...
     [0 9 18 27 36 45 54 63 72 81 90 99 108 117 126 135 144],'YTick',...
     [1:2:68]);
-% plot hist
+%% plot hist
 figure1 = figure;
 axes1 = axes('Parent',figure1);
 bar(hist_mat);
@@ -93,7 +89,7 @@ set(axes1,'XTick',...
     [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69],...
     'YTick',[30 2000 4000 6000 8000 10000 12000]);
 
-% plot hist per subject
+%% plot hist per subject
 figure1 = figure;
 for ind_subj = 1:length(pick_subj)
     subplot(4,4,ind_subj); 
@@ -108,7 +104,7 @@ end
 
 elec_idx = find(hist_mat < 500);
 
-%plot hist - only potential good electrodes  
+%% plot hist - only potential good electrodes  
 figure1 = figure;
 axes1 = axes('Parent',figure1);
 bar(hist_mat(elec_idx))
@@ -118,7 +114,7 @@ title({'Bad Electrodes Histogram - bad trials < 500 only'});
 set(axes1,'XTick',[1 2 3 4 5 6 7 8 9 10 11 12 13],'XTickLabel',...
     {elec_idx(1:13)});
 
-%  plot hist per subject
+%%  plot hist per subject
 figure1 = figure;
 for ind_subj = 1:length(pick_subj)
     subplot(4,4,ind_subj); 

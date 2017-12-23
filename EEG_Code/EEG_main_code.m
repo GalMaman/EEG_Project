@@ -15,7 +15,8 @@ addpath(genpath('./'));
 
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
-elec_param         = 1;
+choose_elec_param  = 1;
+add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
 kernel_param       = 0;
 Fourier_param      = 0;
@@ -25,7 +26,8 @@ pca_param          = 1;
 tSNE_param         = 0;
 diffMap_param      = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 100; % to load all trials enter inf 
+num_of_trials      = 200; % to load all trials enter inf 
+svm_param          = 0;
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -45,14 +47,23 @@ tic
 disp('    --finished loading all trials');
 toc
 
-%% pick electrodes
-elec_array = [12, 26, 35, 41, 53];
-if elec_param == 1
-    [data_cell] = choose_electrodes(data_cell, pick_stims, pick_subj, elec_array);
+%% pick electrodes per subject! (from bad ones, in addition to good ones)
+elec_array = hist_sub(:,pick_subj);
+if add_elec_param == 1
+    [data_cell] = add_electrodes(data_cell, pick_stims, pick_subj, elec_array);
+end
+
+%% pick electrodes (from good ones)
+good_elec = find(elec_array == 0);
+elec_array = [10, 23, 24, 48, 59];
+% elec_array = [4, 14, 26, 41, 53];
+% good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
+if choose_elec_param == 1
+    [data_cell] = choose_electrodes(data_cell, pick_stims, pick_subj, elec_array,good_elec);
 end
 
 %% Fourier transform
-n_fourier = 500;
+n_fourier = 50;
 if Fourier_param == 1
     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
@@ -111,11 +122,10 @@ end
 %% t-SNE
 if (tSNE_param == 1)&&(no_PT_param == 1)
     % plot t-SNE subj
-    figure; mZ = TSNE(cov_mat', full_label_struct{2}, 2 , [], 30);
+    figure; mZ = TSNE(cov_mat', full_label_struct{2}, 2 , [], 50);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects'); % plot per subject
     
     % plot t-SNE stim
-    figure; mZ = TSNE(cov_mat', full_label_struct{3}, 2 , [], 30);
     plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus'); % plot per stimulation
     disp('    --finished t-SNE without PT');
     toc
@@ -124,11 +134,10 @@ end
 %% t-SNE PT
 if (tSNE_param == 1)&&(PT_param == 1)
     % plot t-SNE subj PT
-    figure; mZ = TSNE(cov_mat_PT', full_label_struct{2}, 2 , [], 30);
+    figure; mZ = TSNE(cov_mat_PT', full_label_struct{2}, 2 , [], 50);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, with PT'); % plot per subject
 
     % plot t-SNE stim PT
-    figure; mZ = TSNE(cov_mat_PT', full_label_struct{3}, 2 , [], 30);
     plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus, with PT'); % plot per stimulation
     disp('    --finished t-SNE with PT');
     toc
@@ -158,7 +167,6 @@ if (tSNE_diffMap_param == 1)&&(no_PT_param == 1)
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, after diffusion maps'); % plot per subject
     
     % plot t-SNE stim
-    figure; mZ = TSNE(diffusion_matrix(:,2:P) * diffusion_eig_vals(2:P,2:P), full_label_struct{3}, 2, [], 50);
     plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus, after diffusion maps'); % plot per stimulation
     disp('    --finished t-SNE without PT,  after diffusion maps');
     toc
@@ -171,7 +179,6 @@ if (tSNE_diffMap_param == 1)&&(PT_param == 1)
     figure; mZ = TSNE(diffusion_matrix_PT(:,2:P) * diffusion_eig_vals_PT(2:P,2:P), full_label_struct{2}, 2, [], 50);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, with PT, after diffusion maps'); % plot per subject
     % plot t-SNE stim PT
-    figure; mZ = TSNE(diffusion_matrix_PT(:,2:P) * diffusion_eig_vals_PT(2:P,2:P), full_label_struct{3}, 2, [], 50);
     plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus, with PT, after diffusion maps'); % plot per stimulation    
     disp('    --finished t-SNE with PT,  after diffusion maps');
     toc
@@ -191,22 +198,26 @@ end
 % save(filename, 'data_struct');
 
 %% preparing matrix for SVM train
-% leave_out = 1;
-% [train_data, test_data]       = SVM_script_for_PCA(pca_vec, dat_lengths, full_label_struct, leave_out);
-% [train_data_PT, test_data_PT] = SVM_script_for_PCA(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
-
+if svm_param == 1
+    leave_out = 1;
+    [train_data, test_data]       = SVM_script_for_PCA(pca_vec, dat_lengths, full_label_struct, leave_out);
+    [train_data_PT, test_data_PT] = SVM_script_for_PCA(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
+end
 %% SVM
-% [trainedClassifier, validationAccuracy] = AllSVM_trainClassifier(train_data);
-% data_for_training = test_data(:,2:end);
-% yfit = trainedClassifier.predictFcn(data_for_training);
-% C    = confusionmat(test_data(:,1),yfit);
-% figure();heatmap(C);
-% plotconfusion(test_data(:,1),yfit);
+if svm_param == 1
+    [trainedClassifier, validationAccuracy] = AllSVM_trainClassifier(train_data);
+    data_for_training = test_data(:,2:end);
+    yfit = trainedClassifier.predictFcn(data_for_training);
+    C    = confusionmat(test_data(:,1),yfit);
+    figure();heatmap(C);
+    % plotconfusion(test_data(:,1),yfit);
+end
 
 %% SVM PT
-
-% [trainedClassifier_PT, validationAccuracy_PT] = AllSVM_trainClassifier(train_data_PT);
-% data_for_training_PT = test_data_PT(:,2:end);
-% yfit_PT = trainedClassifier_PT.predictFcn(data_for_training_PT);
-% CPT     = confusionmat(test_data_PT(:,1),yfit_PT);
-% figure();heatmap(CPT);
+if svm_param == 1
+    [trainedClassifier_PT, validationAccuracy_PT] = AllSVM_trainClassifier(train_data_PT);
+    data_for_training_PT = test_data_PT(:,2:end);
+    yfit_PT = trainedClassifier_PT.predictFcn(data_for_training_PT);
+    CPT     = confusionmat(test_data_PT(:,1),yfit_PT);
+    figure();heatmap(CPT);
+end

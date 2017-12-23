@@ -3,6 +3,7 @@ function [ pca_vec, ax ] = plot_PCA(vecs_in_cols, full_label_struct, subj_names,
 % dat_lengths is a vector containing the number of trials per experiment
 
 pca_vec = pca(vecs_in_cols);
+
 % colored according to sick and healthy
 figure(); hold on; ax(1) = gca;
 num_con = unique(full_label_struct{1});
