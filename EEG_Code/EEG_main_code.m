@@ -19,14 +19,14 @@ choose_elec_param  = 1;
 add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
 kernel_param       = 0;
-Fourier_param      = 0;
+Fourier_param      = 1;
 PT_param           = 1;
 no_PT_param        = 1;
 pca_param          = 1;
 tSNE_param         = 0;
 diffMap_param      = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 200; % to load all trials enter inf 
+num_of_trials      = 50; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -63,7 +63,7 @@ if choose_elec_param == 1
 end
 
 %% Fourier transform
-n_fourier = 50;
+n_fourier =100;
 if Fourier_param == 1
     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
