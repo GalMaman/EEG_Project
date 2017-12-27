@@ -14,6 +14,7 @@ addpath(genpath('./'));
 % example save Ronen's: C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\cov_mats_in_rows
 
 src_dir    = 'E:\EEG_Project\CleanData\edited_EEG_data';
+%src_dir = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
