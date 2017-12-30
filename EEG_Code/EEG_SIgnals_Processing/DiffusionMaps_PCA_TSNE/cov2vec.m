@@ -1,4 +1,4 @@
-function [ cov_mat ] = cov2vec(cov_3Dmat)
+function [ cov_mat, RiemannianMean_3Dmat ] = cov2vec(cov_3Dmat)
 
 num_of_subj          = size(cov_3Dmat,2);
 RiemannianMean_3Dmat =[];

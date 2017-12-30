@@ -1,7 +1,7 @@
-function [cov_mat_PT] = Parallel_Tranport(cov_3Dmat)
+function [cov_mat_PT, Riemannian_3Dmat] = Parallel_Tranport(cov_3Dmat)
 
 num_of_subj          = size(cov_3Dmat,2);
-RiemannianMean_3Dmat =[];
+RiemannianMean_3Dmat = [];
 
 for jj = 1 : num_of_subj
     mRiemannianMean      = RiemannianMean(cov_3Dmat{1,jj}); %calculating riemannian mean for each subject

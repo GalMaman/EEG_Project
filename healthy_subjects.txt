@@ -1,0 +1,13 @@
+below are the ages (in years) for Controls 1-10
+I will look for the ages of C11 which I think you have as well (i included only the first 10 in the paper)
+
+12
+9
+10
+7
+12
+15
+7
+12
+16
+13
