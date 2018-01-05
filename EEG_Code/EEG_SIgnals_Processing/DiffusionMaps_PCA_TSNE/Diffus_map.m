@@ -1,4 +1,4 @@
-function [ Psi, Lambda ] = Diffus_map( cov_mat, full_label_struct, subj_names, title_str, dist )
+function [ Psi, Lambda, ax ] = Diffus_map( cov_mat, full_label_struct, subj_names, title_str, dist )
 
 N        = size (cov_mat,3);
 dist_mat = zeros(N, N);
@@ -15,7 +15,7 @@ end
 dist_mat = dist_mat + dist_mat';
 
 epsilon = median(dist_mat(:));
-K       = exp(-dist_mat.^2 / (2 * epsilon)^2);
+K       = exp(-dist_mat.^2 / (5 * epsilon)^2);
 P       = K ./ sum(K, 2);
 
 [Psi, Lambda] = eig(P);

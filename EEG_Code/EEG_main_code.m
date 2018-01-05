@@ -15,8 +15,8 @@ addpath(genpath('./'));
 
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
-choose_elec_param  = 1;
-add_elec_param     = 1;
+choose_elec_param  = 0;
+add_elec_param     = 0;
 covariance_param   = 1; %choose covariance or kernel!
 kernel_param       = 0;
 Fourier_param      = 0;
@@ -24,7 +24,7 @@ PT_param           = 1;
 no_PT_param        = 1;
 pca_param          = 1;
 rot_param          = 1;
-tSNE_param         = 0;
+tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
@@ -90,6 +90,118 @@ end
 %% labels struct
 [cov_3Dmat, dat_lengths, full_label_struct] = CellToMat3D(data_cell,label_struct);
 
+
+%% changing covs to matrices around common mean 
+if no_PT_param == 1
+    [cov_mat, covs_3D] = cov2vec(cov_3Dmat);
+                                    % the matrix of cov-vectors                               
+    disp('    --found Riemanien mean');
+    toc
+end
+
+%% Parallel Transport
+if PT_param == 1
+    [cov_mat_PT, covs_3D_PT] = Parallel_Tranport(cov_3Dmat);
+    disp('    --found Riemanien mean with PT');
+    toc
+end
+
+%% SVM
+leave_out = 1;
+SVM_Classifier(cov_mat, dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(cov_mat_PT, dat_lengths, full_label_struct, leave_out);
+
+%% Running PCA on the Riemannian vectors
+ax1 = [];
+if (pca_param == 1)&&(no_PT_param == 1)
+    [ pca_vec, ax1 ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
+    linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
+    disp('    --finished PCA');
+    toc
+end
+
+%% PCA PT
+if (pca_param == 1)&&(PT_param == 1)
+    [ pca_vec_PT, ax2 ] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
+    linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
+    disp('    --finished PCA');
+    toc
+end
+
+%% pca per subject (rotation) with PT
+if rot_param == 1
+    [pca_mat_PT, ax] = plot_PCA_rot(cov_mat_PT, full_label_struct, subj_names);
+    linkprop(ax ,{'CameraPosition','CameraUpVector'});
+end
+
+%% SVM after PCA
+leave_out  = 1;
+SVM_Classifier(pca_vec, dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(pca_mat_PT, dat_lengths, full_label_struct, leave_out);
+
+%% diffusion maps 
+if diff_euc_param == 1;
+    [Psi, Lambda, ax] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
+    linkprop(ax ,{'CameraPosition','CameraUpVector'});
+    P = 30;
+    diff_mat_euc  = Psi(:,2:P) * Lambda(2:P,2:P);
+    figure; mZ = TSNE(diff_mat_euc , full_label_struct{3}, 2, [], 250);
+    plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, after diffusion maps'); % plot per subject
+
+    % plot t-SNE stim
+    plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus, after diffusion maps'); % plot per stimulation
+    disp('    --finished t-SNE without PT,  after diffusion maps');
+    toc
+end
+
+%% diffusion maps PT
+if diff_euc_param == 1
+    [Psi_PT, Lambda_PT, ax] = Diffus_map(cov_mat_PT, full_label_struct, subj_names, 'with PT', 0);
+    linkprop(ax ,{'CameraPosition','CameraUpVector'});
+    P = 30;
+    diff_mat_euc_PT     = Psi_PT(:,2:P) * Lambda_PT(2:P,2:P);
+    figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 140);
+    plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after diffusion maps'); % plot per subject
+
+    % plot t-SNE stim
+    plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus with PT, after diffusion maps'); % plot per stimulation
+    disp('    --finished t-SNE with PT,  after diffusion maps');
+    toc
+    disp('    --finished diffusion maps');
+    toc
+end
+
+% diffusion maps PT rotation
+if diff_euc_param == 1
+    [Psi_rot, Lambda_rot, ax] = Diffus_map(pca_mat_PT, full_label_struct, subj_names, 'with PT and rotation', 0);
+    linkprop(ax ,{'CameraPosition','CameraUpVector'});
+    P = 30;
+    diff_mat_euc_rot     = Psi_rot(:,2:P) * Lambda_rot(2:P,2:P);
+    figure; mZ = TSNE(diff_mat_euc_rot , full_label_struct{3}, 2, [], 200);
+    plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after rotation'); % plot per subject
+
+    % plot t-SNE stim
+    plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus with PT, after rotation'); % plot per stimulation
+    disp('    --finished t-SNE with PT,  after diffusion maps');
+    toc
+    disp('    --finished diffusion maps');
+    toc
+end
+%% SVM after DM
+leave_out = 7;
+SVM_Classifier(diff_mat_euc', dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(diff_mat_euc_PT', dat_lengths, full_label_struct, leave_out);
+%%
+leave_out = 11;
+SVM_Classifier(diff_mat_euc_rot', dat_lengths, full_label_struct, leave_out);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% pca visualization
 [cov_2D_struct] = CellToMat2D(cov_3Dmat);
 [U]             = AlgoPCA(cov_2D_struct{1});
@@ -128,44 +240,6 @@ title(sprintf('PCA map, colored per stimulus'),'interpreter','latex');
 set(ax,'FontSize',12)
 linkprop(ax ,{'CameraPosition','CameraUpVector'});
 
-%% changing covs to matrices around common mean 
-if no_PT_param == 1
-    [cov_mat, covs_3D] = cov2vec(cov_3Dmat);
-                                    % the matrix of cov-vectors                               
-    disp('    --found Riemanien mean');
-    toc
-end
-
-%% Parallel Transport
-if PT_param == 1
-    [cov_mat_PT, covs_3D_PT] = Parallel_Tranport(cov_3Dmat);
-    disp('    --found Riemanien mean with PT');
-    toc
-end
-
-%% Running PCA on the Riemannian vectors
-ax1 = [];
-if (pca_param == 1)&&(no_PT_param == 1)
-    [ pca_vec, ax1 ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
-    linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
-    disp('    --finished PCA');
-    toc
-end
-
-%% PCA PT
-if (pca_param == 1)&&(PT_param == 1)
-    [ pca_vec_PT, ax2 ] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
-    linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
-    disp('    --finished PCA');
-    toc
-end
-
-%% pca per subject (rotation) with PT
-if rot_param == 1
-    [pca_mat_PT, ax] = plot_PCA_rot(cov_mat_PT, full_label_struct, subj_names);
-    linkprop(ax ,{'CameraPosition','CameraUpVector'});
-end
-
 %% SVM PCA
 
 % pca_svm     = pca_vec(1:2, :);
@@ -196,35 +270,7 @@ yfit_rot                                        = trainedClassifier_rot.predictF
 Crot                                            = confusionmat(test_data_rot(:,1),yfit_rot);
 figure();heatmap(Crot);
 
-%% diffusion maps 
-if diff_euc_param == 1;
-    [Psi, Lambda] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
-    diff_mat_euc  = Psi(:,2:end) * Lambda(2:end,2:end);
-    P = 50;
-    figure; mZ = TSNE(diff_mat_euc(:,2:P) , full_label_struct{2}, 2, [], 50);
-    plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, after diffusion maps'); % plot per subject
 
-    % plot t-SNE stim
-    plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus, after diffusion maps'); % plot per stimulation
-    disp('    --finished t-SNE without PT,  after diffusion maps');
-    toc
-end
-
-%% diffusion maps PT
-if diff_euc_param == 1
-    [Psi_PT, Lambda_PT] = Diffus_map(cov_mat_PT, full_label_struct, subj_names, 'with PT', 0);
-    diff_mat_euc_PT     = Psi_PT(:,2:end) * Lambda_PT(2:end,2:end);
-    P = 50;
-    figure; mZ = TSNE(diff_mat_euc_PT(:,2:P) , full_label_struct{2}, 2, [], 50);
-    plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after diffusion maps'); % plot per subject
-
-    % plot t-SNE stim
-    plot_tSNE(mZ, full_label_struct{3},full_label_struct{4}, 'stimulus with PT, after diffusion maps'); % plot per stimulation
-    disp('    --finished t-SNE with PT,  after diffusion maps');
-    toc
-    disp('    --finished diffusion maps');
-    toc
-end
 
 %%  diffusion maps with Riemannian distance 
 if diff_riem_param == 1
