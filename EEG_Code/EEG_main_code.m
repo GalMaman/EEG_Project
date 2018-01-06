@@ -15,8 +15,8 @@ addpath(genpath('./'));
 
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
-choose_elec_param  = 0;
-add_elec_param     = 0;
+choose_elec_param  = 1;
+add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
 kernel_param       = 0;
 Fourier_param      = 0;
@@ -53,12 +53,15 @@ toc
 
 if add_elec_param == 1
     elec_array = hist_sub(:,pick_subj);
+    elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
+
     [data_cell] = add_electrodes(data_cell, pick_stims, pick_subj, elec_array);
 end
 
 %% pick electrodes (from good ones)
 good_elec = find(elec_array == 0);
 elec_array = [10, 61];
+good_elec  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
 if choose_elec_param == 1
@@ -149,7 +152,7 @@ if diff_euc_param == 1;
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc  = Psi(:,2:P) * Lambda(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc , full_label_struct{3}, 2, [], 250);
+    figure; mZ = TSNE(diff_mat_euc , full_label_struct{3}, 2, [], 30);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, after diffusion maps'); % plot per subject
 
     % plot t-SNE stim
@@ -164,7 +167,7 @@ if diff_euc_param == 1
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc_PT     = Psi_PT(:,2:P) * Lambda_PT(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 140);
+    figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 30);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after diffusion maps'); % plot per subject
 
     % plot t-SNE stim
@@ -175,13 +178,13 @@ if diff_euc_param == 1
     toc
 end
 
-% diffusion maps PT rotation
+%% diffusion maps PT rotation
 if diff_euc_param == 1
     [Psi_rot, Lambda_rot, ax] = Diffus_map(pca_mat_PT, full_label_struct, subj_names, 'with PT and rotation', 0);
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc_rot     = Psi_rot(:,2:P) * Lambda_rot(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc_rot , full_label_struct{3}, 2, [], 200);
+    figure; mZ = TSNE(diff_mat_euc_rot , full_label_struct{3}, 2, [], 25);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after rotation'); % plot per subject
 
     % plot t-SNE stim

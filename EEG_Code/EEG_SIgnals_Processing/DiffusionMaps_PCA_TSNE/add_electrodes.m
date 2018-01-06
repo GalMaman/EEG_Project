@@ -7,9 +7,10 @@ electrodes = 1:68;
 % for ii = 1 : length(elec_array)
 %     idx = [idx; find(electrodes == good_elec(ii))];
 % end
-elec_array = find(elec_array == 1);
-idx = electrodes;
-idx(elec_array) = [];
+%elec_array = find(elec_array == 1);
+%idx = electrodes;
+%idx(elec_array) = [];
+idx = elec_array;
 new_data_cell = cell(length(pick_stims), length(pick_subj));
 for ii = 1 : length(pick_stims)
     for jj = 1 : length(pick_subj)
