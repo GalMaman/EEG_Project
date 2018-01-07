@@ -6,7 +6,7 @@ dist_mat = zeros(N, N);
 if dist == 0
     dist_mat = squareform( pdist(cov_mat') );
 else
-    for jj = 1 :N
+    for jj = 1 : N
         for ii = jj + 1 : N
             dist_mat(jj, ii) = RiemannianDist(cov_mat(:,:,jj), cov_mat(:,:,ii));
         end

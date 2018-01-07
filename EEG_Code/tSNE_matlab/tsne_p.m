@@ -39,7 +39,7 @@ function ydata = tsne_p(P, labels, no_dims)
     final_momentum = 0.8;                               % value to which momentum is changed
     mom_switch_iter = 250;                              % iteration at which momentum is changed
     stop_lying_iter = 100;                              % iteration at which lying about P-values is stopped
-    max_iter = 1000;                                    % maximum number of iterations
+    max_iter = 2000;                                    % maximum number of iterations
     epsilon = 500;                                      % initial learning rate
     min_gain = .01;                                     % minimum gain for delta-bar-delta
     
@@ -97,11 +97,18 @@ function ydata = tsne_p(P, labels, no_dims)
         % Display scatter plot (maximally first three dimensions)
         if ~rem(iter, 10) && ~isempty(labels)
             if no_dims == 1
-                scatter(ydata, ydata, 100, labels, 'Fill');
+                scatter(ydata, ydata, 9, labels, 'filled');
             elseif no_dims == 2
-                scatter(ydata(:,1), ydata(:,2), 100, labels, 'Fill');
+                if length(labels) == 2
+                    h = subplot(1,2,1); colormap(h, jet); scatter(ydata(:,1), ydata(:,2), 50, labels{1}, 'd', 'Fill'); axis tight; axis off
+                    h = subplot(1,2,2); colormap(h, parula); scatter(ydata(:,1), ydata(:,2), 50, labels{2},      'Fill'); axis tight; axis off
+                else
+                    scatter(ydata(:,1), ydata(:,2), 100, labels, 'Fill');
+                end
             else
-                scatter3(ydata(:,1), ydata(:,2), ydata(:,3), 100, labels, 'Fill');
+%                 scatter3(ydata(:,1), ydata(:,2), ydata(:,3), 100, labels, 'Fill');
+                    h = subplot(1,2,1); colormap(h, jet);    scatter3(ydata(:,1), ydata(:,2), ydata(:,3), 50, labels{1}, 'd', 'Fill'); axis tight; axis off
+                    h = subplot(1,2,2); colormap(h, parula); scatter3(ydata(:,1), ydata(:,2), ydata(:,3), 50, labels{2},      'Fill'); axis tight; axis off
             end
             axis tight
             axis off
