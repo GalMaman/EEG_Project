@@ -15,6 +15,7 @@ addpath(genpath('./'));
 
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
+% src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
 choose_elec_param  = 1;
 add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
