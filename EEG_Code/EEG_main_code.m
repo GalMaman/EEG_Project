@@ -20,7 +20,7 @@ choose_elec_param  = 1;
 add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
 kernel_param       = 0;
-Fourier_param      = 0;
+Fourier_param      = 1;
 PT_param           = 1;
 no_PT_param        = 1;
 pca_param          = 1;
@@ -54,15 +54,16 @@ toc
 
 if add_elec_param == 1
     elec_array = hist_sub(:,pick_subj);
-    elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
+    elec_array = find(elec_array == 0);
+%     elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 
     [data_cell] = add_electrodes(data_cell, pick_stims, pick_subj, elec_array);
 end
 
 %% pick electrodes (from good ones)
-good_elec = find(elec_array == 0);
-elec_array = [10, 61];
-good_elec  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
+good_elec = 1:68;
+elec_array = [10,23,60];
+% good_elec  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
 if choose_elec_param == 1
@@ -140,12 +141,15 @@ if rot_param == 1
 end
 
 %% SVM after PCA
-leave_out  = 1;
-SVM_Classifier(pca_vec, dat_lengths, full_label_struct, leave_out);
+leave_out  = 3;
+pca_svm_mat = pca_vec(1:150, :);
+SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
 %%
-SVM_Classifier(pca_vec_PT, dat_lengths, full_label_struct, leave_out);
+pca_svm_mat = pca_vec_PT(1:150, :);
+SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
 %%
-SVM_Classifier(pca_mat_PT, dat_lengths, full_label_struct, leave_out);
+pca_svm_mat = pca_mat_PT(1:150, :);
+SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
 
 %% diffusion maps 
 if diff_euc_param == 1;
@@ -185,7 +189,7 @@ if diff_euc_param == 1
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc_rot     = Psi_rot(:,2:P) * Lambda_rot(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc_rot , full_label_struct{3}, 2, [], 25);
+    figure; mZ = TSNE(diff_mat_euc_rot , full_label_struct{3}, 2, [], 30);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after rotation'); % plot per subject
 
     % plot t-SNE stim
@@ -201,7 +205,7 @@ SVM_Classifier(diff_mat_euc', dat_lengths, full_label_struct, leave_out);
 %%
 SVM_Classifier(diff_mat_euc_PT', dat_lengths, full_label_struct, leave_out);
 %%
-leave_out = 11;
+leave_out = 10;
 SVM_Classifier(diff_mat_euc_rot', dat_lengths, full_label_struct, leave_out);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

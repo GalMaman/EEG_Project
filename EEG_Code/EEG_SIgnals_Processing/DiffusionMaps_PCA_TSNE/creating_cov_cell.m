@@ -4,7 +4,9 @@ new_data_cell = cell(length(pick_stims), length(pick_subj));
 for ii = 1:length(pick_stims)
     for jj = 1:length(pick_subj)
         for kk = 1:length(data_cell{ii,jj})
-        new_data_cell{ii,jj}{kk,1} = cov_of_rows( data_cell{ii,jj}{kk,1});
+%             data_cell{ii,jj}{kk,1} = (data_cell{ii,jj}{kk,1} - mean(data_cell{ii,jj}{kk,1},2)) ./ std(data_cell{ii,jj}{kk,1},[],2);
+%             data_cell{ii,jj}{kk,1} = (data_cell{ii,jj}{kk,1}) ./ (max(data_cell{ii,jj}{kk,1},[],2) - min(data_cell{ii,jj}{kk,1},[],2));
+            new_data_cell{ii,jj}{kk,1} = cov_of_rows( data_cell{ii,jj}{kk,1});
         end
     end
 end

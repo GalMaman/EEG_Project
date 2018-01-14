@@ -17,7 +17,7 @@ end
 %     end
 % end
 
-idx  = 2;
+idx  = 1;
 vSub = setdiff(1:length(num_sub), idx);
 for ii = vSub
     vMult = sign(sum(subj_sutruct{idx,2} .* subj_sutruct{ii,2}));
@@ -30,7 +30,6 @@ end
 
 pca_mat = [];
 for ii = 1 : length(num_sub)
-    eig_vec = subj_sutruct{ii,2}(:,1:3);
     temp    = subj_sutruct{ii,2}' * subj_sutruct{ii,1};
     pca_mat = [pca_mat temp];
 end
