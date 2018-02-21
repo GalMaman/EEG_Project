@@ -3,5 +3,7 @@ function [ kernel_X ] = calculate_kernel_matrix( X )
 dis_mat  = squareform( pdist(X') );
 epsilon  = median(dis_mat(:));
 kernel_X = exp(-dis_mat.^2 / epsilon^2);
+% kernel_X =  exp(-0.1 * dis_mat);
+% kernel_X = exp(-dis_mat / epsilon);
 
 end

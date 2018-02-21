@@ -11,8 +11,9 @@ else
             dist_mat(jj, ii) = RiemannianDist(cov_mat(:,:,jj), cov_mat(:,:,ii));
         end
     end
+    dist_mat = dist_mat + dist_mat';
 end
-dist_mat = dist_mat + dist_mat';
+
 
 epsilon = median(dist_mat(:));
 K       = exp(-dist_mat.^2 / (5 * epsilon)^2);

@@ -19,7 +19,7 @@ src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
 choose_elec_param  = 1;
 add_elec_param     = 1;
 covariance_param   = 1; %choose covariance or kernel!
-kernel_param       = 0;
+kernel_param       = 1;
 Fourier_param      = 1;
 PT_param           = 1;
 no_PT_param        = 1;
@@ -46,23 +46,31 @@ stim_names = stims(pick_stims);
 
 %% Adding trials from chosen subjects and stims into cells
 tic
-[data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir, stims,num_of_trials);
+[data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
+                                                      stims,num_of_trials, 1); % all electrodes 0
+                                                                               % 32 electrodes 1
 disp('    --finished loading all trials');
+toc
+norm_data = 1;
+
+%% ICA
+[data_cell] = dataICA(data_cell, pick_stims, pick_subj);
+disp('    --finished ICA');
 toc
 
 %% pick electrodes per subject! (from bad ones, in addition to good ones)
 load 'bad_elec_subj.mat';
-% if add_elec_param == 1
-%     elec_array = hist_sub(:,pick_subj);
-%     elec_array = find(elec_array == 0);
+if add_elec_param == 1
+    elec_array = hist_sub(:,pick_subj);
+    elec_array = find(elec_array == 0);
 %     elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 
 %     [data_cell] = add_electrodes(data_cell, pick_stims, pick_subj, elec_array);
-% end
+end
 
 %% pick electrodes (from good ones)
 good_elec = 1:68;
-elec_array = [13,15,23,36,61];
+elec_array = [6,7,13,14,15,16,22,23,24,25,31,32,35,41];
 % elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
@@ -71,16 +79,19 @@ if choose_elec_param == 1
 end
 
 %% Fourier transform
-n_fourier =100;
+n_fourier = 50;
 if Fourier_param == 1
-    [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
+    [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj);
+%     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
     toc
+    norm_data = 0;
 end
 
 %% calculate covariance matrices
+% norm_data = 0;
 if covariance_param == 1
-    [data_cell] = creating_cov_cell(data_cell, pick_stims, pick_subj);
+    [data_cell] = creating_cov_cell(data_cell, pick_stims, pick_subj,norm_data);
     disp('    --finished calculating covariance matrices');
     toc
 end
@@ -94,7 +105,8 @@ end
 
 %% labels struct
 [cov_3Dmat, dat_lengths, full_label_struct] = CellToMat3D(data_cell,label_struct);
-
+disp('    --finished data matrix');
+toc
 
 %% changing covs to matrices around common mean 
 if no_PT_param == 1
