@@ -1,17 +1,12 @@
 function [ pca_vec, ax ] = plot_PCA(vecs_in_cols, full_label_struct, subj_names, title_str)
-% Runs PCA on the input which is the data vector, in columns as a mtrix.
-% dat_lengths is a vector containing the number of trials per experiment
 
-% pca_vec = pca(vecs_in_cols);
 [U]     = AlgoPCA(vecs_in_cols);
-% eig_vec = U(:,1:3);
-% pca_vec = eig_vec' * vecs_in_cols;
 pca_vec = U' * vecs_in_cols;
 
 % colored according to sick and healthy
 figure(); hold on; ax(1) = gca;
 num_con = unique(full_label_struct{1});
-label = cell(1, length(num_con));
+label   = cell(1, length(num_con));
 for ii = 1 : length(num_con)
     idx = find(full_label_struct{1} == num_con(ii));
     scatter3(pca_vec(1,idx), pca_vec(2,idx), pca_vec(3,idx),100, full_label_struct{1}(idx), 'Fill');

@@ -8,22 +8,11 @@ for ii = 1 : length(num_sub)
     subj_sutruct{ii,2} = AlgoPCA(subj_sutruct{ii,1});
 end
 
-% for ii = 1 : (length(num_sub) - 1)
-%     for jj = 1 : 3
-%         mult = subj_sutruct{end,2}(:, jj)' * subj_sutruct{ii,2}(:,jj)
-%         if mult < 0
-%             subj_sutruct{ii,2}(:,jj) = -  subj_sutruct{ii,2}(:,jj);
-%         end
-%     end
-% end
 
 idx  = 1;
 vSub = setdiff(1:length(num_sub), idx);
 for ii = vSub
-    vMult = sign(sum(subj_sutruct{idx,2} .* subj_sutruct{ii,2}));
-%     if ii == 1
-%         vMult(1) = -1;
-%     end
+    vMult              = sign(sum(subj_sutruct{idx,2} .* subj_sutruct{ii,2}));
     subj_sutruct{ii,2} = subj_sutruct{ii,2} .* vMult;
 end
 

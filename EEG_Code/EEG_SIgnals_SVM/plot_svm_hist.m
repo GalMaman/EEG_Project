@@ -4,9 +4,8 @@ num_sub      = unique(full_label_struct{2});
 
 success_subj = zeros(length(num_sub),1);
 for ii = 1 : length(num_sub)
-    leave_out  = ii;
-%     pca_svm_mat = pca_mat(1:150, :);
-    percentage = SVM_Classifier(pca_mat, dat_lengths, full_label_struct, leave_out, 0);
+    leave_out          = ii;
+    percentage         = SVM_Classifier(pca_mat, dat_lengths, full_label_struct, leave_out, 0);
     success_subj(ii,1) = percentage;
 end
 

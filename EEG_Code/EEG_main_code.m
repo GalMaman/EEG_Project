@@ -1,6 +1,3 @@
-%% Gilad & Ronen, mapping using diffusion maps
-% Insert the folders of the cov matrices you want to map out, and it
-% applies diffusion maps to these matrices.
 clear;
 clc;
 
@@ -9,16 +6,13 @@ addpath(genpath('./'));
 
 %% entering the 'edited_EEG_data' directory
 % example in Gal's:     E:\EEG_Project\CleanData\edited_EEG_data
-% example in Gilad's:   E:\Gilad\Psagot\Technion\Semester6\Project1\EEG_data_files\EEG_data_edited\edited_EEG_data
-% example in Ronen's:   C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\C04\16\cov
-% example save Ronen's: C:\Users\Ronen\Documents\BrainStorm\brainstormdb\EEG_data\Edited_Data\cov_mats_in_rows
 
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
 % src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
 choose_elec_param  = 1;
 add_elec_param     = 1;
-covariance_param   = 1; %choose covariance or kernel!
+covariance_param   = 1; %choose covariance -or- kernel!
 kernel_param       = 1;
 Fourier_param      = 1;
 PT_param           = 1;
@@ -35,20 +29,20 @@ svm_param          = 0;
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
 pick_subj  = listdlg('PromptString', 'Select subjects;', 'SelectionMode',...
-    'multiple', 'ListString', subjs);
+                     'multiple', 'ListString', subjs);
 subj_names = subjs(pick_subj);
 
 %% choosing stims
 stims      = find_stims( src_dir, subj_names );
 pick_stims = listdlg('PromptString', 'Select stimulations;', 'SelectionMode',...
-    'multiple', 'ListString', stims);
+                     'multiple', 'ListString', stims);
 stim_names = stims(pick_stims);
 
 %% Adding trials from chosen subjects and stims into cells
 tic
 [data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
-                                                      stims,num_of_trials, 1); % all electrodes 0
-                                                                               % 32 electrodes 1
+                                                      stims,num_of_trials, 1); % all electrodes - 0
+                                                                               % 32 electrodes - 1
 disp('    --finished loading all trials');
 toc
 norm_data = 1;
@@ -58,27 +52,17 @@ norm_data = 1;
 disp('    --finished ICA');
 toc
 
-%% pick electrodes per subject! (from bad ones, in addition to good ones)
-load 'bad_elec_subj.mat';
-if add_elec_param == 1
-    elec_array = hist_sub(:,pick_subj);
-    elec_array = find(elec_array == 0);
-%     elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
-
-%     [data_cell] = add_electrodes(data_cell, pick_stims, pick_subj, elec_array);
-end
-
-%% pick electrodes (from good ones)
-good_elec = 1:68;
-elec_array = [6,7,13,14,15,16,22,23,24,25,31,32,35,41];
+%% pick electrodes
+all_elec = 1:68;
+elec_array = [5,46];
 % elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
 if choose_elec_param == 1
-    [data_cell] = choose_electrodes(data_cell, pick_stims, pick_subj, elec_array,good_elec);
+    [data_cell] = choose_electrodes(data_cell, pick_stims, pick_subj, elec_array,all_elec);
 end
 
-%% Fourier transform
+%% FFT 
 n_fourier = 50;
 if Fourier_param == 1
     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj);
@@ -123,12 +107,6 @@ if PT_param == 1
     toc
 end
 
-%% SVM
-leave_out = 1;
-SVM_Classifier(cov_mat, dat_lengths, full_label_struct, leave_out);
-%%
-SVM_Classifier(cov_mat_PT, dat_lengths, full_label_struct, leave_out);
-
 %% Running PCA on the Riemannian vectors
 ax1 = [];
 if (pca_param == 1)&&(no_PT_param == 1)
@@ -152,8 +130,16 @@ if rot_param == 1
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
 end
 
+
+%% SVM
+leave_out = 1;
+SVM_Classifier(cov_mat, dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(cov_mat_PT, dat_lengths, full_label_struct, leave_out);
+
 %% SVM after PCA
-leave_out  = 3;
+leave_out   = 3;
+%%
 pca_svm_mat = pca_vec(1:150, :);
 SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
 %%
@@ -167,7 +153,10 @@ pca_svm_mat = pca_mat_PT(1:150, :);
 success_subj = plot_svm_hist(pca_mat_PT, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
-
+%% SVM histogram
+success_subj_old = plot_svm_hist(pca_vec, dat_lengths, full_label_struct);
+disp('    --finished SVM Histogram');
+toc
 %% diffusion maps 
 if diff_euc_param == 1;
     [Psi, Lambda, ax] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
@@ -472,12 +461,12 @@ end
 
 %%%%%%
 figure(); ax = gca;
-gr_bar = [success_subj_KNN success_subj];
+gr_bar = [success_subj_old success_subj];
 bar(gr_bar);
 ylabel('Success percentage','interpreter','latex');
 xlabel('Test subject','interpreter','latex');
-title('Success percentage - with and without normalization','interpreter','latex');
-legend([{'without normalization'};{'with normalization'}],'interpreter','latex');
+title('Success percentage','interpreter','latex');
+legend([{'Riemannian Geometry only'};{'Normalization, PT and rotation'}],'interpreter','latex');
 set(ax,'FontSize',12)
 ylim([0 100]);
 % bar(success_subj_norm);

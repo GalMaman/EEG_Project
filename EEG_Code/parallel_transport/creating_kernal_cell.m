@@ -1,4 +1,4 @@
-function [new_data_cell] = creating_kernal_cell(data_cell, pick_stims, pick_subj);
+function [new_data_cell] = creating_kernal_cell(data_cell, pick_stims, pick_subj)
 
 new_data_cell = cell(length(pick_stims), length(pick_subj));
 for ii = 1:length(pick_stims)

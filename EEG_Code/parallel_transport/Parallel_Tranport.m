@@ -10,13 +10,14 @@ end
 
 Riemannian_3Dmat = [];
 Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
+% Pmean = RiemannianMean_3Dmat(:,:,1);
 for jj = 1 : num_of_subj
      K  = size(cov_3Dmat{1,jj}, 3);
      for kk = 1 : K  % performing parallel transport for all the trials
          mC   = cov_3Dmat{1,jj}(:, :, kk); 
-         temp = 0.5*log_mat(mC, Pmean);
+         temp = 0.5 * log_mat(mC, Pmean);
          temp = exp_mat(mC, temp);
-         temp = 2*log_mat(RiemannianMean_3Dmat(:,:,jj), temp);
+         temp = 2 * log_mat(RiemannianMean_3Dmat(:,:,jj), temp);
          cov_3Dmat{1,jj}(:, :, kk) = exp_mat(RiemannianMean_3Dmat(:,:,jj), temp); 
 
 %           cov_3Dmat{1,jj}(:, :, kk) = SchildLadder(RiemannianMean_3Dmat(:,:,jj), Pmean, mC);
@@ -26,5 +27,4 @@ for jj = 1 : num_of_subj
 end
 
 cov_mat_PT = CovsToVecs(Riemannian_3Dmat, Pmean);
-
 end
