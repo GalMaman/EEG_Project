@@ -110,7 +110,7 @@ end
 %% Running PCA on the Riemannian vectors
 ax1 = [];
 if (pca_param == 1)&&(no_PT_param == 1)
-    [ pca_vec, ax1 ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
+    [ pca_vec, ax1, Upca ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
     linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
     disp('    --finished PCA');
     toc
@@ -118,7 +118,7 @@ end
 
 %% PCA PT
 if (pca_param == 1)&&(PT_param == 1)
-    [ pca_vec_PT, ax2 ] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
+    [ pca_vec_PT, ax2 ,Upca_PT] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
     linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
@@ -130,33 +130,30 @@ if rot_param == 1
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
 end
 
-
-%% SVM
-leave_out = 1;
-SVM_Classifier(cov_mat, dat_lengths, full_label_struct, leave_out);
-%%
-SVM_Classifier(cov_mat_PT, dat_lengths, full_label_struct, leave_out);
-
-%% SVM after PCA
-leave_out   = 3;
-%%
-pca_svm_mat = pca_vec(1:150, :);
-SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
-%%
-pca_svm_mat = pca_vec_PT(1:150, :);
-SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
-%%
-pca_svm_mat = pca_mat_PT(1:150, :);
-[percentage] = SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out, 1);
-
 %% SVM histogram
-success_subj = plot_svm_hist(pca_mat_PT, dat_lengths, full_label_struct);
+success_subj_ROT = plot_svm_hist(pca_mat_PT, dat_lengths, full_label_struct);
+disp('    --finished SVM Histogram');
+toc
+%% SVM histogram
+success_subj_PT = plot_svm_hist(pca_vec_PT, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% SVM histogram
 success_subj_old = plot_svm_hist(pca_vec, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
+%% plot all
+figure(); ax = gca;
+gr_bar = [success_subj_old success_subj_PT success_subj_ROT];
+bar(gr_bar);
+ylabel('Success percentage','interpreter','latex');
+xlabel('Test subject','interpreter','latex');
+title('Success percentage','interpreter','latex');
+legend([{'Riemannian Geometry only'};{'Normalization and PT'};{'Normalization, PT and rotation'}],'interpreter','latex');
+set(ax,'FontSize',12);
+set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
+    {'C01','C02','C03','C04','C08'});
+ylim([0 100]);
 %% diffusion maps 
 if diff_euc_param == 1;
     [Psi, Lambda, ax] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
@@ -445,6 +442,23 @@ end
 %     disp('    --finished t-SNE with PT,  after diffusion maps');
 %     toc
 % end
+%% SVM
+leave_out = 1;
+SVM_Classifier(cov_mat, dat_lengths, full_label_struct, leave_out);
+%%
+SVM_Classifier(cov_mat_PT, dat_lengths, full_label_struct, leave_out);
+
+%% SVM after PCA
+leave_out   = 3;
+%%
+pca_svm_mat = pca_vec(1:150, :);
+SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
+%%
+pca_svm_mat = pca_vec_PT(1:150, :);
+SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out);
+%%
+pca_svm_mat = pca_mat_PT(1:150, :);
+[percentage] = SVM_Classifier(pca_svm_mat, dat_lengths, full_label_struct, leave_out, 1);
 
 %% saving the data
 % data_struct = struct('subjects', cell2mat(subj_names), 'stimulations', cell2mat(stim_names), ...
@@ -461,12 +475,12 @@ end
 
 %%%%%%
 figure(); ax = gca;
-gr_bar = [success_subj_old success_subj];
+gr_bar = [success_subj_old success_subj_PT success_subj_ROT];
 bar(gr_bar);
 ylabel('Success percentage','interpreter','latex');
 xlabel('Test subject','interpreter','latex');
 title('Success percentage','interpreter','latex');
-legend([{'Riemannian Geometry only'};{'Normalization, PT and rotation'}],'interpreter','latex');
+legend([{'Riemannian Geometry only'};{'Normalization and PT'},{'Normalization, PT and rotation'}],'interpreter','latex');
 set(ax,'FontSize',12)
 ylim([0 100]);
 % bar(success_subj_norm);

@@ -9,8 +9,8 @@ for jj = 1 : num_of_subj
 end
 
 Riemannian_3Dmat = [];
-Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
-% Pmean = RiemannianMean_3Dmat(:,:,1);
+% Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
+Pmean = RiemannianMean_3Dmat(:,:,1);
 for jj = 1 : num_of_subj
      K  = size(cov_3Dmat{1,jj}, 3);
      for kk = 1 : K  % performing parallel transport for all the trials

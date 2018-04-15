@@ -1,4 +1,4 @@
-function [ pca_vec, ax ] = plot_PCA(vecs_in_cols, full_label_struct, subj_names, title_str)
+function [ pca_vec, ax ,U] = plot_PCA(vecs_in_cols, full_label_struct, subj_names, title_str)
 
 [U]     = AlgoPCA(vecs_in_cols);
 pca_vec = U' * vecs_in_cols;
