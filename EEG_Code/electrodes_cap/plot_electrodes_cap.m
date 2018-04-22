@@ -28,8 +28,10 @@ figure(); ax = gca; hold on;
 
 for jj = 1 : length(type_num)
     idx = find(type == type_num(jj));
-    scatter3(electrodes_location(idx,3),electrodes_location(idx,4),electrodes_location(idx,5),250, electrodes_location(idx,2), 'Fill');
+    scatter3(electrodes_location(idx,3),electrodes_location(idx,4),electrodes_location(idx,5),100, electrodes_location(idx,2), 'Fill');
 end
+% scatter3(electrodes_location(:,3),electrodes_location(:,4),electrodes_location(:,5),100, electrodes_location(:,5), 'Fill');
+% colorbar;
 str = string(electrodes_location(:,1));
 textscatter3(electrodes_location(:,3)+0.05,electrodes_location(:,4)+0.05,...
     electrodes_location(:,5)+0.05,str,'TextDensityPercentage',90)
@@ -38,5 +40,7 @@ xlabel('x','interpreter','latex');
 ylabel('y','interpreter','latex');
 zlabel('z','interpreter','latex');
 title('EEG Electrode Cap colord according to stimulus type','interpreter','latex');
+title('EEG Electrode Cap','interpreter','latex');
+
 set(ax,'FontSize',12)
-set(gca,'visible','off')
+% set(gca,'visible','off')

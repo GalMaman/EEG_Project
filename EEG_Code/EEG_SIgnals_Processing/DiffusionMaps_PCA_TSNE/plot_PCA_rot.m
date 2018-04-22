@@ -19,7 +19,7 @@ end
 
 pca_mat = [];
 for ii = 1 : length(num_sub)
-    temp    = subj_sutruct{ii,2}' * subj_sutruct{ii,1};
+    temp    = subj_sutruct{ii,2}' * (subj_sutruct{ii,1} - mean(subj_sutruct{ii,1},2));
     pca_mat = [pca_mat temp];
 end
 

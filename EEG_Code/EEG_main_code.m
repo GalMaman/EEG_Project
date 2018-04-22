@@ -110,7 +110,7 @@ end
 %% Running PCA on the Riemannian vectors
 ax1 = [];
 if (pca_param == 1)&&(no_PT_param == 1)
-    [ pca_vec, ax1, Upca ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
+    [ pca_vec, ax1 ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
     linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
     disp('    --finished PCA');
     toc
@@ -118,7 +118,7 @@ end
 
 %% PCA PT
 if (pca_param == 1)&&(PT_param == 1)
-    [ pca_vec_PT, ax2 ,Upca_PT] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
+    [ pca_vec_PT, ax2] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
     linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
@@ -135,25 +135,26 @@ success_subj_ROT = plot_svm_hist(pca_mat_PT, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% SVM histogram
-success_subj_PT = plot_svm_hist(pca_vec_PT, dat_lengths, full_label_struct);
+success_subj_PT = plot_svm_hist(cov_mat_PT, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% SVM histogram
-success_subj_old = plot_svm_hist(pca_vec, dat_lengths, full_label_struct);
+success_subj_old = plot_svm_hist(cov_mat, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% plot all
 figure(); ax = gca;
 gr_bar = [success_subj_old success_subj_PT success_subj_ROT];
 bar(gr_bar);
-ylabel('Success percentage','interpreter','latex');
-xlabel('Test subject','interpreter','latex');
-title('Success percentage','interpreter','latex');
-legend([{'Riemannian Geometry only'};{'Normalization and PT'};{'Normalization, PT and rotation'}],'interpreter','latex');
+ylabel('Success Percentage','interpreter','latex');
+xlabel('Test Subject','interpreter','latex');
+title('Success Percentage','interpreter','latex');
+legend([{'Riemannian Geometry Only'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
 set(ax,'FontSize',12);
-set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
-    {'C01','C02','C03','C04','C08'});
+% set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
+%     {'C01','C02','C03','C04','C08'});
 ylim([0 100]);
+
 %% diffusion maps 
 if diff_euc_param == 1;
     [Psi, Lambda, ax] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
