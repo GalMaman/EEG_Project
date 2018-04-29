@@ -54,7 +54,7 @@ toc
 
 %% pick electrodes
 all_elec = 1:68;
-elec_array = [5,46];
+elec_array = [5,28,46,50];
 % elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
@@ -71,6 +71,10 @@ if Fourier_param == 1
     toc
     norm_data = 0;
 end
+%% calculate PLV
+[data_cell] = creating_PLV_cell(data_cell, pick_stims, pick_subj,norm_data);
+disp('    --finished calculating PLV matrices');
+toc
 
 %% calculate covariance matrices
 % norm_data = 0;
@@ -156,12 +160,12 @@ set(ax,'FontSize',12);
 ylim([0 100]);
 
 %% diffusion maps 
-if diff_euc_param == 1;
+if diff_euc_param == 1
     [Psi, Lambda, ax] = Diffus_map(cov_mat, full_label_struct, subj_names, [], 0);
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc  = Psi(:,2:P) * Lambda(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc , full_label_struct{3}, 2, [], 30);
+    figure; mZ = TSNE(diff_mat_euc , full_label_struct{3}, 2, [], 20);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects, after diffusion maps'); % plot per subject
 
     % plot t-SNE stim

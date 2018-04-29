@@ -11,6 +11,7 @@ for ii = 1:length(pick_stims)
 %             B = data_cell{ii,jj}{kk,1}(:,2:end);
 %             data_cell{ii,jj}{kk,1} = [A;B];
             new_data_cell{ii,jj}{kk,1} = cov_of_rows( data_cell{ii,jj}{kk,1});
+%             new_data_cell{ii,jj}{kk,1} = corrcoef(data_cell{ii,jj}{kk,1}');
         end
     end
 end
