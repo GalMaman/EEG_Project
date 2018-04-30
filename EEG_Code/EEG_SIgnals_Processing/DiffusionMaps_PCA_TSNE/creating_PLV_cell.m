@@ -11,14 +11,19 @@ for ii = 1:length(pick_stims)
             end
             temp = zeros(num_channels,num_channels);
             for mm = 1 : num_channels
-                for nn = mm + 1 : num_channels
+%                 for nn = mm + 1 : num_channels
+                for nn = 1 : num_channels
                     temp(mm,nn) = calculate_PLV(data_cell{ii,jj}{kk,1}(mm,:),data_cell{ii,jj}{kk,1}(nn,:));
                 end
             end
-            temp = temp + temp';
-            new_data_cell{ii,jj}{kk,1} = temp * temp';
-%             new_data_cell{ii,jj}{kk,1} = temp;
-
+            M = temp;
+            [U, L] = eig(M);
+            vL = diag(L);
+            vL(vL < 0.1) = 0.1;
+            M = (U .* vL') * U';
+%             temp = temp + temp';
+%             new_data_cell{ii,jj}{kk,1} = temp * temp';
+            new_data_cell{ii,jj}{kk,1} = M;
         end
     end
 end
