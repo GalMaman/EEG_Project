@@ -13,5 +13,5 @@ figure(); ax = gca;
 bar(success_subj);
 ylabel('Success percentage','interpreter','latex');
 xlabel('Test subject','interpreter','latex');
-title('Success percentage - with normalization','interpreter','latex');
+title('Success percentage','interpreter','latex');
 set(ax,'FontSize',12)

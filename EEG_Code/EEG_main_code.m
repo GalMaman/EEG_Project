@@ -23,7 +23,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 240; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -65,7 +65,7 @@ end
 %% FFT 
 n_fourier = 50;
 if Fourier_param == 1
-    [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj);
+    [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj,4:80);
 %     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
     toc
@@ -110,11 +110,17 @@ if PT_param == 1
     disp('    --found Riemanien mean with PT');
     toc
 end
-
+%%
+[cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat);
+disp('    --found Riemanien mean with PT');
+toc
+    
 %% Running PCA on the Riemannian vectors
-ax1 = [];
+ax1     = [];
+[U]     = AlgoPCA(cov_mat);
+pca_vec = U' * cov_mat;
 if (pca_param == 1)&&(no_PT_param == 1)
-    [ pca_vec, ax1 ] = plot_PCA(cov_mat, full_label_struct, subj_names, []);
+    [ ax1 ] = plot_PCA(pca_vec, full_label_struct, []);
     linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
     disp('    --finished PCA');
     toc
@@ -122,7 +128,9 @@ end
 
 %% PCA PT
 if (pca_param == 1)&&(PT_param == 1)
-    [ pca_vec_PT, ax2] = plot_PCA(cov_mat_PT, full_label_struct, subj_names, 'with PT');
+    [U]        = AlgoPCA(cov_mat_PT);
+    pca_vec_PT = U' * cov_mat_PT;
+    [ax2]      = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
     linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
@@ -130,16 +138,21 @@ end
 
 %% pca per subject (rotation) with PT
 if rot_param == 1
-    [pca_mat_PT, ax] = plot_PCA_rot(cov_mat_PT, full_label_struct, subj_names);
+    [pca_vec_rot] = rotation_pca(cov_mat_PT, full_label_struct);
+    [ax]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
 end
 
 %% SVM histogram
-success_subj_ROT = plot_svm_hist(pca_mat_PT, dat_lengths, full_label_struct);
+success_subj_ROT = plot_svm_hist(pca_vec_rot, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% SVM histogram
 success_subj_PT = plot_svm_hist(cov_mat_PT, dat_lengths, full_label_struct);
+disp('    --finished SVM Histogram');
+toc
+%% SVM histogram
+success_subj_PT_N = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 %% SVM histogram
@@ -154,6 +167,20 @@ ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 title('Success Percentage','interpreter','latex');
 legend([{'Riemannian Geometry Only'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+set(ax,'FontSize',12);
+% set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
+%     {'C01','C02','C03','C04','C08'});
+ylim([0 100]);
+
+%%
+%% plot all
+figure(); ax = gca;
+gr_bar = [success_subj_PT success_subj_PT_N];
+bar(gr_bar);
+ylabel('Success Percentage','interpreter','latex');
+xlabel('Test Subject','interpreter','latex');
+title('Success Percentage','interpreter','latex');
+legend([{'PT'};{'Closed Form PT'}],'interpreter','latex');
 set(ax,'FontSize',12);
 % set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
 %     {'C01','C02','C03','C04','C08'});
@@ -178,7 +205,7 @@ end
 if diff_euc_param == 1
     [Psi_PT, Lambda_PT, ax] = Diffus_map(cov_mat_PT, full_label_struct, subj_names, 'with PT', 0);
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
-    P = 30;
+    P = 50;
     diff_mat_euc_PT     = Psi_PT(:,2:P) * Lambda_PT(2:P,2:P);
     figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 30);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after diffusion maps'); % plot per subject

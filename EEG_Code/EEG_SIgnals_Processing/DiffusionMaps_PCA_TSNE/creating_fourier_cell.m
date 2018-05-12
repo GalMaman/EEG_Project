@@ -8,19 +8,16 @@ for ii = 1 : length(pick_stims)
         for kk = 1 : length(data_cell{ii,jj})
             N = size(data_cell{ii,jj}{kk,1},1);
             for nn = 1 : N
-                if nargin == 3
+                if length(n_fourier) > 1
                     temp = abs(fft( data_cell{ii,jj}{kk,1}(nn,:)));
-                    temp_data_cell{ii,jj}{kk,1}(nn,:) = temp(4:80);
-                    new_data_cell{ii,jj}{kk,1}(nn,:) = temp(4:80);
+%                     temp_data_cell{ii,jj}{kk,1}(nn,:) = temp(4:80);
+                    new_data_cell{ii,jj}{kk,1}(nn,:) = temp(n_fourier);
                 else
                     temp_data_cell{ii,jj}{kk,1}(nn,:) = abs(fft( data_cell{ii,jj}{kk,1}(nn,:),n_fourier));
                 end
                 
             end
-%             temp_data_cell{ii,jj}{kk,1} = (temp_data_cell{ii,jj}{kk,1} - mean(temp_data_cell{ii,jj}{kk,1},2)) ./ std(temp_data_cell{ii,jj}{kk,1},[],2);
-%             new_data_cell{ii,jj}{kk,1} = mean(cat(3,mscohere(temp_data_cell{ii,jj}{kk,1}(:,1:4)'),...
-%                   cov(temp_data_cell{ii,jj}{kk,1}(:,5:11)'),cov(temp_data_cell{ii,jj}{kk,1}(:,12:27)'),...
-%                   cov(temp_data_cell{ii,jj}{kk,1}(:,27:77)')),3);
+            new_data_cell{ii,jj}{kk,1} = cov_of_rows(new_data_cell{ii,jj}{kk,1});
 
         end
     end

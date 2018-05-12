@@ -9,6 +9,7 @@ label_st    = zeros(length(pick_subj) * length(pick_stims), 1);     % the label 
 label_con   = zeros(length(pick_subj) * length(pick_stims), 1);      % the label for the SVM - sick = 1, healthy = 0
 stims_ID    = {'right arm', 'left arm', 'light flash', 'Frequent tone', 'rare tone', 'sham word 1', 'Subject own name', 'sham word ', 'sham word '};
 
+
 for ind_subj = 1:length(pick_subj)
     for ind_stim = 1:length(pick_stims)
         % Gives a label of sick/not sick (1=sick):
@@ -28,7 +29,9 @@ for ind_subj = 1:length(pick_subj)
             if (num_of_trials == inf) || (num_of_trials > length(temp_trials))
                 load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials);
             else
-                load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(1:num_of_trials));
+%                 load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(1:num_of_trials));
+                trials_idx  = randperm(length(temp_trials));
+                load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(trials_idx(1:num_of_trials)));
             end
         else
             temp_dir    = [src_dir, '\', subjs{pick_subj(ind_subj)}, '\',...
@@ -41,6 +44,8 @@ for ind_subj = 1:length(pick_subj)
                 load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials);
             else
                 load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials(1:num_of_trials));
+%                 trials_idx  = randperm(length(temp_trials));
+%                 load_struct = cellfun(@(X) load(X, 'good_data'), temp_trials(sort(trials_idx(1:num_of_trials))));
             end
         end
         data_cell{ind_stim,ind_subj}   = struct2cell(load_struct).';    % loading into cell
@@ -50,7 +55,7 @@ for ind_subj = 1:length(pick_subj)
     end
 end
 
-label_struct = cell(5,1);
+label_struct    = cell(5,1);
 label_struct{1} = legend_str;
 label_struct{2} = label_con;
 label_struct{3} = label_sub;
