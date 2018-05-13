@@ -1,0 +1,43 @@
+clear;
+clc;
+
+%%
+addpath(genpath('./'));
+
+%% parameters
+src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
+% src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
+num_of_trials      = 50; % to load all trials enter inf 
+
+%% choosing subjects
+subjs      = find_subject_names(src_dir);
+pick_subj  = listdlg('PromptString', 'Select subjects;', 'SelectionMode',...
+                     'multiple', 'ListString', subjs);
+subj_names = subjs(pick_subj);
+
+%% choosing stims
+stims      = find_stims( src_dir, subj_names );
+pick_stims = listdlg('PromptString', 'Select stimulations;', 'SelectionMode',...
+                     'multiple', 'ListString', stims);
+stim_names = stims(pick_stims);
+
+%% Adding trials from chosen subjects and stims into cells
+tic
+[data_cell, ~, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
+                                                      stims,num_of_trials, 0); % all electrodes - 0
+                                                                               % 32 electrodes - 1
+disp('    --finished loading all trials');
+toc
+norm_data = 1;
+
+%%
+load bad_elec_subj.mat
+good_elec   = find(sum(hist_sub(:,pick_subj),2) == 0);
+
+%%
+elec_num   = 3;
+[elec_vec] = choose_optimal_electrodes(data_cell, label_struct, pick_stims, pick_subj, good_elec, elec_num);
+
+
+
+

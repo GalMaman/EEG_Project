@@ -46,7 +46,9 @@ for jj = 1 : 4
     end
     xlabel('$\psi_1$','Interpreter','latex');
     ylabel('$\psi_2$','Interpreter','latex');
-    zlabel('$\psi_3$','Interpreter','latex');
+    if size(pca_vec,1) >= 3
+        zlabel('$\psi_3$','Interpreter','latex');
+    end
     legend(figure_struct{jj,4}(:), 'Interpreter', 'latex', 'location','best');
     title(sprintf(figure_struct{jj,2}),'interpreter','latex');
 end

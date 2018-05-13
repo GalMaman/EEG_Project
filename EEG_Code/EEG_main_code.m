@@ -23,7 +23,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 240; % to load all trials enter inf 
+num_of_trials      = 100; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -84,6 +84,11 @@ if covariance_param == 1
     toc
 end
 
+%%
+[data_cell] = creating_covstime_cell(data_cell, pick_stims, pick_subj,0);
+disp('    --finished calculating covariance matrices');
+toc
+    
 %% calculate kernel matrices
 if kernel_param == 1
     [data_cell] = creating_kernal_cell(data_cell, pick_stims, pick_subj);
