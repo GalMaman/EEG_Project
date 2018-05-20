@@ -31,7 +31,7 @@ legend(full_label_struct{4}(:), 'Interpreter', 'none', 'location', 'best');
 title(sprintf('PCA map, colored per stimulus %s', title_str),'interpreter','latex');
 % view(-89.46,11.92);
 
-time_vec = zeros(1800,1);
+time_vec = zeros(size(pca_vec,2),1);
 for ii = 1 : length(num_sub)
     idx_sub = find(full_label_struct{2} == num_sub(ii));
     for jj = 1 : length(num_stim)
@@ -46,8 +46,9 @@ end
         
 figure(); hold on; ax(3) = gca;
 for ii = 1 : 9
+%     idx = intersect(find(time_vec == ii), find(full_label_struct{2} == 3));
     idx = find(time_vec == ii);
-    scatter3(pca_vec(1,idx), pca_vec(2,idx), pca_vec(3,idx),30,ii * ones(200,1),'filled');
+    scatter3(pca_vec(1,idx), pca_vec(2,idx), pca_vec(3,idx),30,ii * ones(size(idx,1),1),'filled');
 end
 xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
@@ -57,4 +58,19 @@ legend({'1:40 somatosensory';'41:80 somatosensory';'81:120 somatosensory';...
     '41:80 auditory';'81:120 auditory'}, 'Interpreter', 'none', 'location', 'best');
 title(sprintf('PCA map, colored per stimulus %s', title_str),'interpreter','latex');
 
+for jj = 1:length(num_sub)
+    figure; hold on; ax(3 + jj) = gca;
+    for ii = 1 : 9
+        idx = intersect(find(time_vec == ii), find(full_label_struct{2} == jj));
+%         idx = find(time_vec == ii);
+        scatter3(pca_vec(1,idx), pca_vec(2,idx), pca_vec(3,idx),30,ii * ones(size(idx,1),1),'filled');
+    end
+    xlabel('$\psi_1$','Interpreter','latex');
+    ylabel('$\psi_2$','Interpreter','latex');
+    zlabel('$\psi_3$','Interpreter','latex');
+    legend({'1:40 somatosensory';'41:80 somatosensory';'81:120 somatosensory';...
+        '1:40 visual';'41:80 visual';'81:120 visual';'1:40 auditory';...
+        '41:80 auditory';'81:120 auditory'}, 'Interpreter', 'none', 'location', 'best');
+    title(['subject' num2str(jj)],'interpreter','latex');
+end
 linkprop(ax,{'CameraPosition','CameraUpVector'}); 

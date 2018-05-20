@@ -23,20 +23,22 @@ PtGeometry            = 2;
 PtAndRotationGeometry = 3;
 
 subject      = 2;
-GeometryCase = PtAndRotationGeometry;
+GeometryCase = PtGeometry;
 
 dirPath = ['./example_rotation_', num2str(subject), '_subj/'];
 switch (GeometryCase)
     case RiemannianGeometry
         fileName  = 'Riemannian_Geometry/data.mat';
         title_str = 'Riemannian_Geometry';
+        vAxis     = [-8, 8, -6, 6, -2, 2];
     case PtGeometry
         fileName  = 'PT/data_PT.mat';
         title_str = 'PT';
+        vAxis     = [-10, 10, -5, 5, -2, 2];
     case PtAndRotationGeometry
         fileName  = 'PT_and_rotation/data_rot.mat';
         title_str = 'PT and rotation';
-        vAxis     = [-10, 10, -5, 5, -2, 2];
+        vAxis     = [-8, 8, -5, 5, -2, 2];
 end
 
 load([dirPath, fileName]);
@@ -60,12 +62,11 @@ xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
 zlabel('$\psi_3$','Interpreter','latex');
 h = legend(subj_str(:), 'location','best'); set(h, 'Interpreter', 'Latex');
-title(title_str, 'Interpreter', 'Latex');
+% title(title_str, 'Interpreter', 'Latex');
 axis(vAxis);
 % view(-89.46,11.92);
 
-%%
-if 0
+
 figure; hold on; grid on; set(gca, 'FontSize', 16); ax(2) = gca;
 num_stim = unique(full_label_struct{3});
 for ii = 1 : length(num_stim)
@@ -76,8 +77,7 @@ xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
 zlabel('$\psi_3$','Interpreter','latex');
 legend(full_label_struct{4}(:), 'Interpreter', 'none', 'location', 'best');
-title(sprintf('PCA map, colored per stimulus %s', title_str),'interpreter','latex');
+% title(sprintf('PCA map, colored per stimulus %s', title_str),'interpreter','latex');
 % view(-89.46,11.92);
-
+axis(vAxis);
 linkprop(ax,{'CameraPosition','CameraUpVector'}); 
-end

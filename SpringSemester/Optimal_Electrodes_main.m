@@ -7,7 +7,7 @@ addpath(genpath('./'));
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
 % src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 500; % to load all trials enter inf 
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -65,6 +65,21 @@ else
 end
 
 %%
-plot_electrodes_cap(elec_vec);
+plot_electrodes_cap(elec_vec,good_elec,elec_score);
 
+%% 
+allelecs4 = zeros(68,1);
+allelecs4(comb_vecs)   = elec_score;
 
+%% bar
+figure;
+score_per_subj = [allelecs1 allelecs2 allelecs3 allelecs4];
+bar(score_per_subj,'stacked');
+ylabel('Success Percentage','interpreter','latex');
+xlabel('Electrode Number','interpreter','latex');
+title('Electrodes Score','interpreter','latex');
+legend([{'C01'};{'C02'};{'C03'};{'C04'}],'interpreter','latex');
+
+figure;
+imagesc(score_per_subj); colorbar; colormap('spring');
+title('Electrodes Score','interpreter','latex');

@@ -23,7 +23,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 100; % to load all trials enter inf 
+num_of_trials      = 50; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -40,15 +40,20 @@ stim_names = stims(pick_stims);
 
 %% Adding trials from chosen subjects and stims into cells
 tic
-[data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
+[load_data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
                                                       stims,num_of_trials, 1); % all electrodes - 0
                                                                                % 32 electrodes - 1
 disp('    --finished loading all trials');
 toc
-norm_data = 1;
+% norm_data = 1;
+
+%%
+load bad_elec_subj.mat
+good_elec = find(sum(hist_sub(:,pick_subj),2) == 0);
+load_data_cell = creating_good_elec_cell(load_data_cell, pick_stims, pick_subj, good_elec);
 
 %% ICA
-[data_cell] = dataICA(data_cell, pick_stims, pick_subj);
+[data_cell] = dataICA(load_data_cell, pick_stims, pick_subj);
 disp('    --finished ICA');
 toc
 
@@ -65,33 +70,33 @@ end
 %% FFT 
 n_fourier = 50;
 if Fourier_param == 1
-    [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj,4:80);
+    [data_cell] = creating_fourier_cell(load_data_cell, pick_stims, pick_subj,4:80);
 %     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
     toc
     norm_data = 0;
 end
 %% calculate PLV
-[data_cell] = creating_PLV_cell(data_cell, pick_stims, pick_subj,norm_data);
+[data_cell] = creating_PLV_cell(load_data_cell, pick_stims, pick_subj,norm_data);
 disp('    --finished calculating PLV matrices');
 toc
 
 %% calculate covariance matrices
 % norm_data = 0;
 if covariance_param == 1
-    [data_cell] = creating_cov_cell(data_cell, pick_stims, pick_subj,norm_data);
+    [data_cell] = creating_cov_cell(load_data_cell, pick_stims, pick_subj,norm_data);
     disp('    --finished calculating covariance matrices');
     toc
 end
 
 %%
-[data_cell] = creating_covstime_cell(data_cell, pick_stims, pick_subj,0);
+[data_cell] = creating_covstime_cell(load_data_cell, pick_stims, pick_subj,0);
 disp('    --finished calculating covariance matrices');
 toc
     
 %% calculate kernel matrices
 if kernel_param == 1
-    [data_cell] = creating_kernal_cell(data_cell, pick_stims, pick_subj);
+    [data_cell] = creating_kernal_cell(load_data_cell, pick_stims, pick_subj);
     disp('    --finished calculating kernel matrices');
     toc
 end
@@ -152,18 +157,51 @@ end
 success_subj_ROT = plot_svm_hist(pca_vec_rot, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
+
+
 %% SVM histogram
 success_subj_PT = plot_svm_hist(cov_mat_PT, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
-%% SVM histogram
-success_subj_PT_N = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
-disp('    --finished SVM Histogram');
-toc
+
+
 %% SVM histogram
 success_subj_old = plot_svm_hist(cov_mat, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
+
+%% first run
+A1 = success_subj_old;
+B1 = success_subj_PT;
+C1 = success_subj_ROT;
+pick_subj1 = pick_subj;
+
+%% second run
+A2 = success_subj_old;
+B2 = success_subj_PT;
+C2 = success_subj_ROT;
+pick_subj2 = pick_subj;
+
+%% combined for paper
+mat1 = [pick_subj1' A1 B1 C1];
+mat2 = [pick_subj2' A2 B2 C2];
+
+all_clsf = [mat1 ; mat2];
+all_clsf = sortrows(all_clsf);
+
+%% paper
+figure(); ax = gca;
+gr_bar = [all_clsf(:,2) all_clsf(:,3) all_clsf(:,4)];
+bar(gr_bar);
+ylabel('Success Percentage','interpreter','latex');
+xlabel('Tested Subject','interpreter','latex');
+% title('Success Percentage','interpreter','latex');
+legend([{'Riemannian Geometry Only'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+% set(ax,'FontSize',12);
+set(ax,'FontSize',16,'XTick',1 : size(all_clsf,1),'XTickLabel',...
+    subjs(1:11));
+ylim([0 100]);
+
 %% plot all
 figure(); ax = gca;
 gr_bar = [success_subj_old success_subj_PT success_subj_ROT];
@@ -172,12 +210,16 @@ ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 title('Success Percentage','interpreter','latex');
 legend([{'Riemannian Geometry Only'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
-set(ax,'FontSize',12);
-% set(ax,'FontSize',12,'XTick',[1 2 3 4 5],'XTickLabel',...
-%     {'C01','C02','C03','C04','C08'});
+% set(ax,'FontSize',12);
+set(ax,'FontSize',12,'XTick',1:size(subj_names),'XTickLabel',...
+    subj_names);
 ylim([0 100]);
 
 %%
+%% SVM histogram
+success_subj_PT_N = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
+disp('    --finished SVM Histogram');
+toc
 %% plot all
 figure(); ax = gca;
 gr_bar = [success_subj_PT success_subj_PT_N];
@@ -225,7 +267,7 @@ end
 
 %% diffusion maps PT rotation
 if diff_euc_param == 1
-    [Psi_rot, Lambda_rot, ax] = Diffus_map(pca_mat_PT, full_label_struct, subj_names, 'with PT and rotation', 0);
+    [Psi_rot, Lambda_rot, ax] = Diffus_map(pca_vec_rot, full_label_struct, subj_names, 'with PT and rotation', 0);
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 30;
     diff_mat_euc_rot     = Psi_rot(:,2:P) * Lambda_rot(2:P,2:P);

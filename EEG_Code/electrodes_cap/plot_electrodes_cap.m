@@ -1,19 +1,25 @@
-function [] = plot_electrodes_cap(elec_array)
+function [] = plot_electrodes_cap(elec_array, good_elec, color_vec)
 
 load 'electrodes_location.mat';
 
+[~,idx_good,idx_color] = intersect(electrodes_location(:,1), good_elec,'stable');
+electrodes_location = electrodes_location(idx_good,:);
 idx_chosen       = [];
 for ii = 1 : length(elec_array)
     idx_chosen = [idx_chosen; find(elec_array(ii) == electrodes_location(:,1))];
 end
-
 figure(); hold on; ax = gca;
-scatter3(electrodes_location(:,3),electrodes_location(:,4),electrodes_location(:,5),150,'filled');
+if nargin > 2
+    scatter3(electrodes_location(:,3),electrodes_location(:,4),electrodes_location(:,5),150,color_vec(idx_color),'filled');
+    colorbar;
+else
+    scatter3(electrodes_location(:,3),electrodes_location(:,4),electrodes_location(:,5),150,'filled');
+    legend([{'electrodes location'}; {'electrodes used'}], 'interpreter','latex');
+end
 plot3(electrodes_location(idx_chosen,3),electrodes_location(idx_chosen,4),electrodes_location(idx_chosen,5),'mo', 'Linewidth',2,'MarkerSize',12);
-str = string(electrodes_location(idx_chosen,1));
-textscatter3(electrodes_location(idx_chosen,3)+0.05,electrodes_location(idx_chosen,4)+0.05,...
-    electrodes_location(idx_chosen,5)+0.05,str,'TextDensityPercentage',90)
-legend([{'electrodes location'}; {'electrodes used'}], 'interpreter','latex');
+str = string(electrodes_location(:,1));
+textscatter3(electrodes_location(:,3)+0.05,electrodes_location(:,4)+0.05,...
+    electrodes_location(:,5)+0.05,str,'TextDensityPercentage',90)
 xlabel('x','interpreter','latex');
 ylabel('y','interpreter','latex');
 zlabel('z','interpreter','latex');
