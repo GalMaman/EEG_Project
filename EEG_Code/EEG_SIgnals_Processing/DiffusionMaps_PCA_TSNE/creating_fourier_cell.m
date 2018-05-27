@@ -17,7 +17,10 @@ for ii = 1 : length(pick_stims)
                 end
                 
             end
-            new_data_cell{ii,jj}{kk,1} = cov_of_rows(new_data_cell{ii,jj}{kk,1});
+            dist_mat  = squareform(pdist(new_data_cell{ii,jj}{kk,1}));
+            epsilon   = median(dist_mat(:));
+            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / ( epsilon));
+%             new_data_cell{ii,jj}{kk,1} = cov_of_rows(new_data_cell{ii,jj}{kk,1});
 
         end
     end

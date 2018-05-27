@@ -1,4 +1,4 @@
-pca_vec = pca_vec_rot;
+% pca_vec = pca_vec_rot;
 title_str = 'with PT and rotation';
 ax = [];
 subj_names = {'C01';'C02';'C03';'C04';'C05';'C06';'C07';'C08';'C10';'C11';'C12';'S01';'S02';'S03';'S04';'S05'};

@@ -29,6 +29,7 @@ if (length(num_stim) == 2) && (size(test_mat,1) == 1)
 
 else
     data_mat  = [full_label_struct{3} test_mat'];
+    rand_mat  = data_mat(randperm(size(data_mat,1)),:);
     idx_train = [];
     idx_test  = [];
     start_idx = 1;
@@ -40,8 +41,8 @@ else
             start_idx = start_idx + dat_lengths(ii,jj);
         end
     end
-    train_data = data_mat(idx_train,:);
-    test_data  = data_mat(idx_test,:);
+    train_data = rand_mat(idx_train,:);
+    test_data  = rand_mat(idx_test,:);
 
     % classification
     [trainedClassifier, ~] = linSVM1subj_trainClassifier(train_data);

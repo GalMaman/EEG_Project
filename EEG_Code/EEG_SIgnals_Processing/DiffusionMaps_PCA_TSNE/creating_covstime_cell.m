@@ -7,11 +7,11 @@ for ii = 1:length(pick_stims)
             if norm_data == 1 
                 data_cell{ii,jj}{kk,1} = (data_cell{ii,jj}{kk,1} - mean(data_cell{ii,jj}{kk,1},2)) ./ std(data_cell{ii,jj}{kk,1},[],2);
             end
-%             elec_mat = calculate_elec_cov(data_cell{ii,jj}{kk,1});
-            elec_mat  = calculate_elec_spectrogram(data_cell{ii,jj}{kk,1});
+            elec_mat = calculate_elec_cov(data_cell{ii,jj}{kk,1});
+%             elec_mat  = calculate_elec_spectrogram(data_cell{ii,jj}{kk,1});
             dist_mat  = calculate_dist_mat(elec_mat);
             epsilon   = median(dist_mat(:));
-            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / ( epsilon));
+            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / (0.5 * epsilon));
         end
     end
 end

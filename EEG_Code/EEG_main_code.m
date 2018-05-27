@@ -70,7 +70,7 @@ end
 %% FFT 
 n_fourier = 50;
 if Fourier_param == 1
-    [data_cell] = creating_fourier_cell(load_data_cell, pick_stims, pick_subj,4:80);
+    [data_cell] = creating_fourier_cell(load_data_cell, pick_stims, pick_subj,1:100);
 %     [data_cell] = creating_fourier_cell(data_cell, pick_stims, pick_subj, n_fourier);
     disp('    --finished calculating fourier matrices');
     toc

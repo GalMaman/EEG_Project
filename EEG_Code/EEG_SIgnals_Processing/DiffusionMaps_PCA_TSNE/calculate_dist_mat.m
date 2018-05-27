@@ -5,5 +5,6 @@ Y = zeros(N);
 for ii = 1 : N
     for jj = 1 : N
         Y(ii,jj) = norm(X(:,:,ii)-X(:,:,jj),'fro');
+%     Y(ii,jj) = RiemannianDist(X(:,:,ii), X(:,:,jj));
     end
 end

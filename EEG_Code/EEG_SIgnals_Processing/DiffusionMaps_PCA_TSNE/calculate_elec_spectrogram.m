@@ -8,4 +8,3 @@ for ii = 1 : N
     mat_seg  = squareform(pdist(fft_seg'));
     Y        = cat(3, Y, mat_seg);
 end
-
