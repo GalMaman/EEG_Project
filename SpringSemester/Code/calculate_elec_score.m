@@ -29,23 +29,27 @@ if (length(num_stim) == 2) && (size(test_mat,1) == 1)
 
 else
     data_mat  = [full_label_struct{3} test_mat'];
-    rand_mat  = data_mat(randperm(size(data_mat,1)),:);
+    rand_idx  = randperm(size(data_mat,1));
     idx_train = [];
     idx_test  = [];
     start_idx = 1;
     for jj = 1 : length(num_sub)
         for ii = 1 : length(num_stim)
-            num_train = ceil(0.8 * dat_lengths(ii,jj));
-            idx_train = [idx_train; (start_idx : start_idx + num_train - 1)'];
-            idx_test  = [idx_test; (start_idx + num_train : start_idx + dat_lengths(ii,jj) - 1)'];
-            start_idx = start_idx + dat_lengths(ii,jj);
+            num_train  = ceil(0.8 * dat_lengths(ii,jj));
+            stim_idx   = start_idx : start_idx + dat_lengths(ii,jj) - 1;
+            stim_idx   = stim_idx(randperm(length(stim_idx)));
+            stim_train = stim_idx(1 : num_train);
+            idx_train  = [idx_train; stim_train'];
+            stim_test  = stim_idx(1 + num_train : dat_lengths(ii,jj));
+            idx_test   = [idx_test; stim_test'];
+            start_idx  = start_idx + dat_lengths(ii,jj);
         end
     end
-    train_data = rand_mat(idx_train,:);
-    test_data  = rand_mat(idx_test,:);
+    train_data = data_mat(rand_idx(idx_train),:);
+    test_data  = data_mat(rand_idx(idx_test),:);
 
     % classification
-    [trainedClassifier, ~] = linSVM1subj_trainClassifier(train_data);
+    [trainedClassifier, ~] = LinSVM2Elec_trainClassifier(train_data);
     data_for_testing       = test_data(:,2:end);
     yfit                   = trainedClassifier.predictFcn(data_for_testing);
 

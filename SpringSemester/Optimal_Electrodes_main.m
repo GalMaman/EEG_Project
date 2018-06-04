@@ -7,7 +7,7 @@ addpath(genpath('./'));
 %% parameters
 src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
 % src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 500; % to load all trials enter inf 
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -28,7 +28,6 @@ tic
                                                                                % 32 electrodes - 1
 disp('    --finished loading all trials');
 toc
-norm_data = 1;
 
 %% finding good electrodes
 load bad_elec_subj.mat
@@ -36,7 +35,7 @@ good_elec   = find(sum(hist_sub(:,pick_subj),2) == 0);
 
 %% choose best electrodes
 tic;
-elec_num   = 1;
+elec_num   = 2;
 [comb_vecs, elec_score] = choose_optimal_electrodes(data_cell, label_struct, pick_stims, pick_subj, good_elec, elec_num);
 disp('    --found optimal electrodes');
 toc
@@ -64,8 +63,27 @@ else
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
 end
 
-%%
-plot_electrodes_cap(elec_vec,good_elec,elec_score);
+%% 
+if elec_num > 1
+    plot_electrodes_cap(elec_vec,good_elec);
+else
+    plot_electrodes_cap(elec_vec,good_elec,elec_score);
+end
+
+%% plot for 2 electrodes
+N_vecs = 10;
+str    = strcat(string(comb_vecs(idx_vecs(1:N_vecs),1)),',',string(comb_vecs(idx_vecs(1:N_vecs),2)));
+figure; ax = gca;
+scatter3(comb_vecs(idx_vecs(1:N_vecs),1), comb_vecs(idx_vecs(1:N_vecs),2), elec_score(idx_vecs(1:N_vecs)), 50, elec_score(idx_vecs(1:N_vecs)),'filled');
+hold on; textscatter3(comb_vecs(idx_vecs(1:N_vecs),1)+0.2, comb_vecs(idx_vecs(1:N_vecs),2)+0.2,...
+    elec_score(idx_vecs(1:N_vecs))+0.4 ,str ,'TextDensityPercentage',90);
+xlim([1 68]);
+ylim([1 68]);
+title([num2str(N_vecs) ' best combinations'],'Interpreter','latex');
+xlabel('electrode 1','Interpreter','latex');
+ylabel('electrode 2','Interpreter','latex');
+zlabel('score','Interpreter','latex');
+set(ax,'FontSize',12);
 
 %% 
 score_per_subj = [];

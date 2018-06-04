@@ -19,7 +19,7 @@ end
 plot3(electrodes_location(idx_chosen,3),electrodes_location(idx_chosen,4),electrodes_location(idx_chosen,5),'mo', 'Linewidth',2,'MarkerSize',12);
 str = string(electrodes_location(:,1));
 textscatter3(electrodes_location(:,3)+0.05,electrodes_location(:,4)+0.05,...
-    electrodes_location(:,5)+0.05,str,'TextDensityPercentage',90)
+    electrodes_location(:,5)+0.05,str,'TextDensityPercentage',90);
 xlabel('x','interpreter','latex');
 ylabel('y','interpreter','latex');
 zlabel('z','interpreter','latex');

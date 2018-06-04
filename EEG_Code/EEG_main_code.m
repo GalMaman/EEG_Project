@@ -23,7 +23,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 150; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -45,7 +45,7 @@ tic
                                                                                % 32 electrodes - 1
 disp('    --finished loading all trials');
 toc
-% norm_data = 1;
+norm_data = 1;
 
 %%
 load bad_elec_subj.mat
