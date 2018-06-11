@@ -7,7 +7,7 @@ legend_str  = zeros(length(pick_subj) * length(pick_stims), 1);     % the legend
 label_sub   = zeros(length(pick_subj) * length(pick_stims), 1);     % the label for the SVM -per subject
 label_st    = zeros(length(pick_subj) * length(pick_stims), 1);     % the label for the SVM -per stimulation
 label_con   = zeros(length(pick_subj) * length(pick_stims), 1);      % the label for the SVM - sick = 1, healthy = 0
-stims_ID    = {'right arm', 'left arm', 'light flash', 'Frequent tone', 'rare tone', 'sham word 1', 'Subject own name', 'sham word ', 'sham word '};
+stims_ID    = {'right arm', 'left arm', 'light flash', 'frequent tone', 'rare tone', 'sham word 1', 'subject own name', 'sham word ', 'sham word '};
 
 
 for ind_subj = 1:length(pick_subj)
@@ -51,7 +51,8 @@ for ind_subj = 1:length(pick_subj)
         data_cell{ind_stim,ind_subj}   = struct2cell(load_struct).';    % loading into cell
         legend_cell{ind_stim,ind_subj} = [subjs{pick_subj(ind_subj)}, ' - ', stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];  
                                                                               % updating legend
-        stims_str{ind_stim} =  [stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];                                                                     
+%         stims_str{ind_stim} =  [stims{pick_stims(ind_stim)},sprintf( ' %s', stims_ID{pick_stims(ind_stim)})];
+        stims_str{ind_stim} =  stims_ID{pick_stims(ind_stim)};                                                                     
     end
 end
 

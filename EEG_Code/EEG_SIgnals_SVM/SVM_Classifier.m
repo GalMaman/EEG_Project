@@ -12,8 +12,8 @@ function [percentage] = SVM_Classifier(cov_mat,dat_lengths, full_label_struct, l
 % [trainedClassifier, ~] = SVMlinear5subjtrainClassifier(train_data);
 % [trainedClassifier, ~] = LDA_7_trainClassifier(train_data);
 % [trainedClassifier, ~] = Boost7_trainClassifier(train_data);
-[trainedClassifier, ~] = LinSVM7trainClassifier(train_data);
-% [trainedClassifier, ~] = baggedtree_5subjtrainClassifier(train_data);
+% [trainedClassifier, ~] = LinSVM7trainClassifier(train_data);
+[trainedClassifier, ~] = SVMlinear6subjtrainClassifier(train_data);
 data_for_testing = test_data(:,2:end);
 yfit              = trainedClassifier.predictFcn(data_for_testing);
 
@@ -50,7 +50,7 @@ if toplot == 1
     vP              = trainedClassifier.predictFcn(projected_mTest);
     
     figure; hold on; ax = gca;
-    plot3(score(idx_test,1), score(idx_test,2),score(idx_test,3),'mo','Linewidth',3,'MarkerSize',8);
+%     plot3(score(idx_test,1), score(idx_test,2),score(idx_test,3),'mo','Linewidth',3,'MarkerSize',8);
     for ii = 1 : 3
         idx = find(vP(:) == ii);
         scatter3(mTest(idx,1), mTest(idx,2), mTest(idx,3), 8, vP(idx), 'Fill');
@@ -63,9 +63,10 @@ if toplot == 1
     xlabel('$\psi_1$','Interpreter','latex');
     ylabel('$\psi_2$','Interpreter','latex');
     zlabel('$\psi_3$','Interpreter','latex');
-    legend([{'tested subject'},{'somatosensory'}, {'visual'}, {'auditory'}], 'Interpreter', 'latex');
-    title('Decision ares'); 
-    set(ax,'FontSize',10)
+%     legend([{'tested subject'},{'somatosensory'}, {'visual'}, {'auditory'}], 'Interpreter', 'latex');
+    legend([{'somatosensory'}, {'visual'}, {'auditory'}], 'Interpreter', 'latex');
+%     title('Decision ares'); 
+    set(ax,'FontSize',12)
     xlim([min(score(:,1)) max(score(:,1))]);
     ylim([min(score(:,2)) max(score(:,2))]);
     zlim([min(score(:,3)) max(score(:,3))]);

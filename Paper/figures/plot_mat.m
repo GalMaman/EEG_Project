@@ -21,11 +21,12 @@ clear
 RiemannianGeometry    = 1;
 PtGeometry            = 2;
 PtAndRotationGeometry = 3;
+MtGeometry            = 4;
 
 subject      = 2;
 GeometryCase = PtAndRotationGeometry;
 
-dirPath = ['./example_rotation_', num2str(subject), '_subj/'];
+dirPath = ['./example_rotation_', num2str(subject), '_subj_MT/'];
 switch (GeometryCase)
     case RiemannianGeometry
         fileName  = 'Riemannian_Geometry/data.mat';
@@ -39,27 +40,39 @@ switch (GeometryCase)
         fileName  = 'PT_and_rotation/data_rot.mat';
         title_str = 'PT and rotation';
         vAxis     = [-6.5, 4.8, -2, 1.8];
+    case MtGeometry
+        fileName  = 'MT/data_MT.mat';
+        title_str = 'MT and rotation';
+        vAxis     = [-6.5, 5.1, -2.2, 2.5];
 end
 
 load([dirPath, fileName]);
 load([dirPath, 'labels.mat']);
+full_label_struct{4}(:) = lower(full_label_struct{4}(:));
 
 %%
-full_label_struct{4}(:) = eraseBetween(full_label_struct{4}(:),'_',' ');
-full_label_struct{4}(:) = lower(extractAfter(full_label_struct{4}(:),"_"));
+% full_label_struct{4}(:) = eraseBetween(full_label_struct{4}(:),'_',' ');
+% full_label_struct{4}(:) = lower(extractAfter(full_label_struct{4}(:),"_"));
 
 %%
 ax         = [];
 subj_names = {'C01';'C02';'C03';'C04';'C05';'C06';'C07';'C08';'C10';'C11';'C12';'S01';'S02';'S03';'S04';'S05'};
-color_list = {[0 1 1];
-              [1 0 1];
-              [0 1 0]}; % for 3 stimulations
+color_list = {[0.8 0 0];
+              [1 0.8 0];
+              [0 0.2 0.6];
+              [0.6 0 0.4];
+              [0.2 0.6 0.6]}; % for 3 stimulations
+% color_list = {[1 0.4 0.4];
+%               [1 1 0.6];
+%               [0.6 0.8 1];
+%               [1 0.6 0.8];
+%               [0.4 0.8 0.8]}; % for 3 stimulations          
 
 figure; hold on; grid on; ax(1) = gca;
 num_sub = unique(full_label_struct{2});
 for ii = 1 : length(num_sub)
     idx = find(full_label_struct{2} == num_sub(ii));
-    scatter(pca_vec(1,idx), pca_vec(2,idx),  100, full_label_struct{2}(idx), 'Marker', 'x', 'LineWidth', 3);  
+    scatter(pca_vec(1,idx), pca_vec(2,idx), 80,'MarkerFaceColor',color_list{ii},'MarkerEdgeColor','k', 'Marker', 'square', 'LineWidth', 0.05);  
 end
 subj_str = subj_names(num_sub);
 xlabel('$\psi_1$','Interpreter','latex');
@@ -73,7 +86,7 @@ figure; hold on; grid on; ax(2) = gca;
 num_stim = unique(full_label_struct{3});
 for ii = 1 : length(num_stim)
     idx = find(full_label_struct{3} == num_stim(ii));
-    scatter(pca_vec(1,idx), pca_vec(2,idx),40,'MarkerFaceColor',color_list{ii},'MarkerEdgeColor','none'); 
+    scatter(pca_vec(1,idx), pca_vec(2,idx),50,'MarkerFaceColor',color_list{ii+2},'MarkerEdgeColor','k','LineWidth', 0.05);
 end
 xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');

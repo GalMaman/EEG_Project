@@ -35,7 +35,7 @@ good_elec   = find(sum(hist_sub(:,pick_subj),2) == 0);
 
 %% choose best electrodes
 tic;
-elec_num   = 2;
+elec_num = 2;
 [comb_vecs, elec_score] = choose_optimal_electrodes(data_cell, label_struct, pick_stims, pick_subj, good_elec, elec_num);
 disp('    --found optimal electrodes');
 toc
@@ -84,6 +84,25 @@ xlabel('electrode 1','Interpreter','latex');
 ylabel('electrode 2','Interpreter','latex');
 zlabel('score','Interpreter','latex');
 set(ax,'FontSize',12);
+
+score_mat = zeros(68);
+for ii = 1:size(comb_vecs,1)
+    score_mat(comb_vecs(ii,1), comb_vecs(ii,2)) = elec_score(ii,1);
+    score_mat(comb_vecs(ii,2), comb_vecs(ii,1)) = elec_score(ii,1);
+end
+
+tick_vec = 1:5:68;
+figure; 
+imagesc(score_mat);
+colorbar;
+title(sprintf('Subject %s - score results', subjs{pick_subj}),'Interpreter','latex');
+xlabel('electrode 1','Interpreter','latex');
+ylabel('electrode 2','Interpreter','latex');
+set(gca, 'XTick', tick_vec);
+set(gca, 'XTickLabel', tick_vec);
+set(gca, 'YTick', tick_vec);
+set(gca, 'YTickLabel', tick_vec);
+set(gca,'FontSize',14);
 
 %% 
 score_per_subj = [];

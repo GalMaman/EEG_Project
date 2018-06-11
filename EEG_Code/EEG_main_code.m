@@ -23,7 +23,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 150; % to load all trials enter inf 
+num_of_trials      = 50; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -115,43 +115,61 @@ if no_PT_param == 1
 end
 
 %% Parallel Transport
-if PT_param == 1
-    [cov_mat_PT, covs_3D_PT] = Parallel_Tranport(cov_3Dmat);
-    disp('    --found Riemanien mean with PT');
-    toc
-end
+% if PT_param == 1
+%     [cov_mat_PT, covs_3D_PT] = Parallel_Tranport(cov_3Dmat);
+%     disp('    --found Riemanien mean with PT');
+%     toc
+% end
 %%
 [cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat);
 disp('    --found Riemanien mean with PT');
 toc
-    
+
+%% mean transport
+[cov_mat_mean] = Mean_Tranport(cov_3Dmat);
+disp('    --found Riemanien mean with MT');
+
 %% Running PCA on the Riemannian vectors
 ax1     = [];
 [U]     = AlgoPCA(cov_mat);
 pca_vec = U' * cov_mat;
 if (pca_param == 1)&&(no_PT_param == 1)
-    [ ax1 ] = plot_PCA(pca_vec, full_label_struct, []);
-    linkprop(ax1,{'CameraPosition','CameraUpVector'}); 
+    [ ax ] = plot_PCA(pca_vec, full_label_struct, []);
+    linkprop(ax,{'CameraPosition','CameraUpVector'}); 
     disp('    --finished PCA');
     toc
 end
 
 %% PCA PT
 if (pca_param == 1)&&(PT_param == 1)
-    [U]        = AlgoPCA(cov_mat_PT);
-    pca_vec_PT = U' * cov_mat_PT;
-    [ax2]      = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
-    linkprop([ax1 ,ax2],{'CameraPosition','CameraUpVector'});
+    [U]        = AlgoPCA(cov_mat_PT_N);
+    pca_vec_PT = U' * cov_mat_PT_N;
+    [ax]       = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
+    linkprop(ax,{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
 end
 
+%% PCA MT
+[U]        = AlgoPCA(cov_mat_mean);
+pca_vec_MT = U' * cov_mat_mean;
+ax         = plot_PCA(pca_vec_MT, full_label_struct, 'with Mean Transport');
+linkprop([ax],{'CameraPosition','CameraUpVector'});
+disp('    --finished PCA');
+toc
+
 %% pca per subject (rotation) with PT
 if rot_param == 1
-    [pca_vec_rot] = rotation_pca(cov_mat_PT, full_label_struct);
+    [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
     [ax]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
 end
+%%
+% if rot_param == 1
+%     [pca_vec_rot] = rotation_pca(cov_mat_mean, full_label_struct);
+%     [ax]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
+%     linkprop(ax ,{'CameraPosition','CameraUpVector'});
+% end
 
 %% SVM histogram
 success_subj_ROT = plot_svm_hist(pca_vec_rot, dat_lengths, full_label_struct);
@@ -160,10 +178,14 @@ toc
 
 
 %% SVM histogram
-success_subj_PT = plot_svm_hist(cov_mat_PT, dat_lengths, full_label_struct);
+success_subj_PT = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 
+%% SVM histogram
+success_subj_mean = plot_svm_hist(cov_mat_mean, dat_lengths, full_label_struct);
+disp('    --finished SVM Histogram');
+toc
 
 %% SVM histogram
 success_subj_old = plot_svm_hist(cov_mat, dat_lengths, full_label_struct);
@@ -171,13 +193,13 @@ disp('    --finished SVM Histogram');
 toc
 
 %% first run
-A1 = success_subj_old;
+A1 = success_subj_mean;
 B1 = success_subj_PT;
 C1 = success_subj_ROT;
 pick_subj1 = pick_subj;
 
 %% second run
-A2 = success_subj_old;
+A2 = success_subj_mean;
 B2 = success_subj_PT;
 C2 = success_subj_ROT;
 pick_subj2 = pick_subj;
@@ -196,7 +218,7 @@ bar(gr_bar);
 ylabel('Success Percentage','interpreter','latex');
 xlabel('Tested Subject','interpreter','latex');
 % title('Success Percentage','interpreter','latex');
-legend([{'Riemannian Geometry Only'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+legend([{'Mean Transport'};{'Parallel Transport'};{'PT and Rotation'}],'interpreter','latex');
 % set(ax,'FontSize',12);
 set(ax,'FontSize',16,'XTick',1 : size(all_clsf,1),'XTickLabel',...
     subjs(1:11));
