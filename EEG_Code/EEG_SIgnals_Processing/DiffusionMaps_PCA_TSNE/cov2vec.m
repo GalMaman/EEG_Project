@@ -6,7 +6,7 @@ RiemannianMean_3Dmat =[];
 for jj = 1 : num_of_subj
     RiemannianMean_3Dmat = cat(3, RiemannianMean_3Dmat, cov_3Dmat{:,jj});
 end
-cov_mat = CovsToVecs(RiemannianMean_3Dmat);
+cov_mat = CovsToVecs(RiemannianMean_3Dmat,1);
 
 end
 

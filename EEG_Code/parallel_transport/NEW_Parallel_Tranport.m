@@ -8,10 +8,10 @@ for jj = 1 : num_of_subj
     RiemannianMean_3Dmat = cat(3, RiemannianMean_3Dmat, mRiemannianMean);
 end
 
-Riemannian_3Dmat = [];
-Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
-% Pmean = RiemannianMean_3Dmat(:,:,1);
-for jj = 1 : num_of_subj
+Riemannian_3Dmat = cov_3Dmat{1,1};
+% Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
+Pmean = RiemannianMean_3Dmat(:,:,1);
+for jj = 2 : num_of_subj
      E  = (Pmean * (RiemannianMean_3Dmat(:,:,jj))^(-1))^(0.5);
      K  = size(cov_3Dmat{1,jj}, 3);
      for kk = 1 : K  % performing parallel transport for all the trials
@@ -23,6 +23,6 @@ for jj = 1 : num_of_subj
      end
      Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj}); 
 end
-
-cov_mat_PT = CovsToVecs(Riemannian_3Dmat, Pmean);
+white      = 1;
+cov_mat_PT = CovsToVecs(Riemannian_3Dmat, white, Pmean);
 end

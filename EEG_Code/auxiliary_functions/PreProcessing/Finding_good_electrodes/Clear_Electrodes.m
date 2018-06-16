@@ -11,7 +11,7 @@ window_len = 31;
 threshold = 100;
 percent_trial = 0.03;
 percent_stim = 0.05;
-bad_trial = 0.5;
+bad_trial = 0.5; 
 
 %% Initializing variables:
 N = length(subj_names);
@@ -24,8 +24,13 @@ good_electrodes = 1:electrodes_num; % finding the good electrodes by
 % First loop for pulling out the good electrodes of each trial
 for ii = 1:N
     for jj = stims_vec
-        stim_src_str  = [direct, '\', subj_names{ii},...
+        if jj > 3
+            stim_src_str  = [direct, '\', subj_names{ii},...
                                         '\Stim_', num2str(jj)];
+        else
+            stim_src_str  = [direct, '\', subj_names{ii},...
+                                        '\Stim_0', num2str(jj)];
+        end
 %         allfiles = dir(stim_src_str);
 %         allnames = {allfiles.name}.';
 %         M = length(allnames);
@@ -52,10 +57,17 @@ bad_electrodes = setdiff(1:electrodes_num, good_electrodes);
 % second loop for saving the data of the good electrodes only
 for ii = 1:N
     for jj = stims_vec
-        stim_src_str  = [direct, '\', subj_names{ii},...
+        if jj > 3
+            stim_src_str  = [direct, '\', subj_names{ii},...
                                         '\Stim_', num2str(jj), '\clean'];
-        stim_dest_str = [direct, '\', subj_names{ii},...
+            stim_dest_str = [direct, '\', subj_names{ii},...
                                         '\Stim_', num2str(jj), '\good_data'];
+        else
+            stim_src_str  = [direct, '\', subj_names{ii},...
+                                        '\Stim_0', num2str(jj), '\clean'];
+            stim_dest_str = [direct, '\', subj_names{ii},...
+                                        '\Stim_0', num2str(jj), '\good_data'];
+        end
         
         allfiles = dir(stim_src_str);
         allnames = {allfiles.name}.';

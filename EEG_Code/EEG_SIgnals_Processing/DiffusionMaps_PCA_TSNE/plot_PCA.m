@@ -37,7 +37,7 @@ for jj = 1 : 4
         idx = find(figure_struct{jj,1} == figure_struct{jj,3}(ii));
         if size(pca_vec,1) >= 3
             scatter3(pca_vec(1,idx), pca_vec(2,idx), pca_vec(3,idx),30, figure_struct{jj,1}(idx), 'filled');
-%         textscatter3(pca_vec(1,idx)+0.03, pca_vec(2,idx)+0.03, pca_vec(3,idx)+0.01,str(idx),'TextDensityPercentage',90)
+%         textscatter3(pca_vec(1,idx)+0.08, pca_vec(2,idx)+0.06, pca_vec(3,idx)+0.1,str(idx),'TextDensityPercentage',90)
         elseif size(pca_vec,1) == 2
             plot(pca_vec(1,idx),pca_vec(2,idx));
         else

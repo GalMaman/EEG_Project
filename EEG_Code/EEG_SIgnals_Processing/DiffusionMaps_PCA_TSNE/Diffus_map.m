@@ -16,7 +16,7 @@ end
 
 
 epsilon = median(dist_mat(:));
-K       = exp(-dist_mat.^2 / (5 * epsilon)^2);
+K       = exp(-dist_mat.^2 / (8 * epsilon)^2);
 P       = K ./ sum(K, 2);
 
 [Psi, Lambda] = eig(P);

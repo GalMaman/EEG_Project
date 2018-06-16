@@ -2,8 +2,7 @@ clear;
 clc;
 %% entering the 'edited_EEG_data' directory
 % example in Gal's:     E:\EEG_Project\EEG_data_with_elec\edited_EEG_data
-src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
-
+src_dir = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
 pick_subj  = listdlg('PromptString', 'Select subjects;', 'SelectionMode',...
@@ -52,10 +51,14 @@ for ind_subj = 1:length(pick_subj)
     vY  = [vY;
           vYc];
 end
+
 hist_sub = [];
 for ind_subj = 1:length(pick_subj) 
     hist_sub(:,ind_subj) = sum(all_data(:,1+9*(ind_subj-1):9*ind_subj),2);
 end
+hist_sub(hist_sub ~= 0) = 1;
+
+%%
 hist_sub(hist_sub == 0) = NaN;
 hist_mat = sum(all_data,2);
 hist_mat(hist_mat == 0) = NaN;

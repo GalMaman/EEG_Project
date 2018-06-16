@@ -25,6 +25,6 @@ for jj = 1 : num_of_subj
      end
      Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj}); 
 end
-
-cov_mat_PT = CovsToVecs(Riemannian_3Dmat, Pmean);
+white      = 1;
+cov_mat_PT = CovsToVecs(Riemannian_3Dmat, white, Pmean);
 end

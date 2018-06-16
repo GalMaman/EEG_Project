@@ -1,6 +1,6 @@
-function mX = CovsToVecs(Covs, Riemannian_Mean)
+function mX = CovsToVecs(Covs, white, Riemannian_Mean)
 % Covs is a 3D tensor: (row,cols,N)
-    if nargin == 1
+    if nargin == 2
         mRiemannianMean = RiemannianMean(Covs);
     else
         mRiemannianMean = Riemannian_Mean;
@@ -15,7 +15,11 @@ function mX = CovsToVecs(Covs, Riemannian_Mean)
     
     mW = sqrt(2) * ones(D) - (sqrt(2) - 1) * eye(D);
     for kk = 1 : K
-        Skk      = logm(mCSR * Covs(:,:,kk) * mCSR) .* mW;
+        if white == 0
+            Skk      = logm(Covs(:,:,kk)) .* mW;
+        else
+            Skk      = logm(mCSR * Covs(:,:,kk) * mCSR) .* mW;
+        end
         mX(:,kk) = Skk(triu(true(size(Skk))));
     end
     
