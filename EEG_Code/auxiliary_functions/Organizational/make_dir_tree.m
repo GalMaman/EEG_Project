@@ -9,8 +9,14 @@ for ii = 1:N
     name_str = subjects{ii};
     mkdir(name_str);
     for jj = stims_vec
-        stim_str = [name_str, '\Stim_', num2str(jj)];
-        mkdir(name_str , ['Stim_', num2str(jj)]);
+        if jj>3
+            stim_str = [name_str, '\Stim_', num2str(jj)];
+            mkdir(name_str , ['Stim_', num2str(jj)]);
+        else
+            stim_str = [name_str, '\Stim_0', num2str(jj)];
+            mkdir(name_str , ['Stim_0', num2str(jj)]);
+        end
+        
         mkdir(stim_str , 'clean');      % clean data with bad electrodes
         mkdir(stim_str , 'good_data');  % data with only good electrodes
         mkdir(stim_str , 'cov');        % cov matrices

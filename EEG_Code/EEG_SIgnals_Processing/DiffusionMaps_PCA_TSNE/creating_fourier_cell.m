@@ -11,16 +11,16 @@ for ii = 1 : length(pick_stims)
                 if length(n_fourier) > 1
                     temp = abs(fft( data_cell{ii,jj}{kk,1}(nn,:)));
 %                     temp_data_cell{ii,jj}{kk,1}(nn,:) = temp(4:80);
-                    new_data_cell{ii,jj}{kk,1}(nn,:) = temp(n_fourier);
+                    new_data_cell{ii,jj}{kk,1}(nn,:) = temp;
                 else
                     temp_data_cell{ii,jj}{kk,1}(nn,:) = abs(fft( data_cell{ii,jj}{kk,1}(nn,:),n_fourier));
                 end
                 
             end
-            dist_mat  = squareform(pdist(new_data_cell{ii,jj}{kk,1}));
-            epsilon   = median(dist_mat(:));
-            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / ( epsilon));
-%             new_data_cell{ii,jj}{kk,1} = cov_of_rows(new_data_cell{ii,jj}{kk,1});
+%             dist_mat  = squareform(pdist(new_data_cell{ii,jj}{kk,1}));
+%             epsilon   = median(dist_mat(:));
+%             new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / ( epsilon));
+            new_data_cell{ii,jj}{kk,1} = cov_of_rows(new_data_cell{ii,jj}{kk,1});
 
         end
     end

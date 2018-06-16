@@ -8,7 +8,11 @@ addpath(genpath('./'));
 % example in Gal's:     E:\EEG_Project\CleanData\edited_EEG_data
 
 %% parameters
-src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
+% src_dir = 'E:\EEG_Project\CleanData\edited_EEG_data'; % old data
+% src_dir = 'E:\EEG_Project\CleanIIR\edited_EEG_data'; % IIR filtered
+src_dir = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
+% src_dir = 'E:\EEG_Project\DataNoFilter\edited_EEG_data';
+% src_dir = 'E:\EEG_Project\NewCleanData\edited_EEG_data'; % FIR filtered
 % src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
 choose_elec_param  = 1;
 add_elec_param     = 1;
@@ -23,7 +27,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 100; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -41,15 +45,18 @@ stim_names = stims(pick_stims);
 %% Adding trials from chosen subjects and stims into cells
 tic
 [load_data_cell, legend_cell, label_struct] = load_trials( pick_stims, pick_subj,subjs, src_dir,...
-                                                      stims,num_of_trials, 1); % all electrodes - 0
+                                                      stims,num_of_trials, 0); % all electrodes - 0
                                                                                % 32 electrodes - 1
 disp('    --finished loading all trials');
 toc
 norm_data = 1;
 
-%%
+
 load bad_elec_subj.mat
-good_elec = find(sum(hist_sub(:,pick_subj),2) == 0);
+good_elec1 = find(sum(hist_sub,2) == 0);
+load bad_elecs.mat
+good_elec2 = find(sum(hist_sub(:,1:11),2) == 0);
+good_elec = intersect(good_elec1,good_elec2);
 load_data_cell = creating_good_elec_cell(load_data_cell, pick_stims, pick_subj, good_elec);
 
 %% ICA
@@ -82,7 +89,7 @@ disp('    --finished calculating PLV matrices');
 toc
 
 %% calculate covariance matrices
-% norm_data = 0;
+norm_data = 1;
 if covariance_param == 1
     [data_cell] = creating_cov_cell(load_data_cell, pick_stims, pick_subj,norm_data);
     disp('    --finished calculating covariance matrices');
@@ -144,8 +151,8 @@ end
 if (pca_param == 1)&&(PT_param == 1)
     [U]        = AlgoPCA(cov_mat_PT_N);
     pca_vec_PT = U' * cov_mat_PT_N;
-    [ax]       = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
-    linkprop(ax,{'CameraPosition','CameraUpVector'});
+    [ax1]       = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
+    linkprop(ax1,{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
 end
@@ -161,8 +168,8 @@ toc
 %% pca per subject (rotation) with PT
 if rot_param == 1
     [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
-    [ax]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
-    linkprop(ax ,{'CameraPosition','CameraUpVector'});
+    [ax2]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
+    linkprop([ax1 ax2] ,{'CameraPosition','CameraUpVector'});
 end
 %%
 % if rot_param == 1
@@ -272,11 +279,11 @@ end
 
 %% diffusion maps PT
 if diff_euc_param == 1
-    [Psi_PT, Lambda_PT, ax] = Diffus_map(cov_mat_PT, full_label_struct, subj_names, 'with PT', 0);
+    [Psi_PT, Lambda_PT, ax] = Diffus_map(cov_mat_PT_N, full_label_struct, subj_names, 'with PT', 0);
     linkprop(ax ,{'CameraPosition','CameraUpVector'});
     P = 50;
     diff_mat_euc_PT     = Psi_PT(:,2:P) * Lambda_PT(2:P,2:P);
-    figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 30);
+    figure; mZ = TSNE(diff_mat_euc_PT , full_label_struct{3}, 2, [], 20);
     plot_tSNE(mZ, full_label_struct{2}, subj_names, 'subjects with PT, after diffusion maps'); % plot per subject
 
     % plot t-SNE stim

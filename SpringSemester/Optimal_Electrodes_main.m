@@ -5,9 +5,10 @@ clc;
 addpath(genpath('./'));
 
 %% parameters
-src_dir            = 'E:\EEG_Project\CleanData\edited_EEG_data';
-% src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
-num_of_trials      = 500; % to load all trials enter inf 
+% src_dir       = 'E:\EEG_Project\CleanData\edited_EEG_data';
+src_dir       = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
+% src_dir     = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
+num_of_trials = 50; % to load all trials enter inf 
 
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
@@ -35,7 +36,7 @@ good_elec   = find(sum(hist_sub(:,pick_subj),2) == 0);
 
 %% choose best electrodes
 tic;
-elec_num = 2;
+elec_num = 1;
 [comb_vecs, elec_score] = choose_optimal_electrodes(data_cell, label_struct, pick_stims, pick_subj, good_elec, elec_num);
 disp('    --found optimal electrodes');
 toc
