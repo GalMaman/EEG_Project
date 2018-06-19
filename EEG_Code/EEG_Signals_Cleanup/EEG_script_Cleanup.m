@@ -23,7 +23,7 @@ c_begin = fix(clock);
 % source_direct = directories{1};
 % dest_direct   = directories{2};
 source_direct = 'E:\EEG_Project\EEG_data_organized';
-dest_direct   = 'E:\EEG_Project\DataNoFilter';
+dest_direct   = 'E:\EEG_Project\GoodData';
 cellfun(@(x) addpath(x), {source_direct;dest_direct});
 cd(dest_direct);
 

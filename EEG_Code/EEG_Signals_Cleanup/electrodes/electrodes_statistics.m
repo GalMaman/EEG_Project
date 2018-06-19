@@ -2,7 +2,7 @@ clear;
 clc;
 %% entering the 'edited_EEG_data' directory
 % example in Gal's:     E:\EEG_Project\EEG_data_with_elec\edited_EEG_data
-src_dir = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
+src_dir = 'E:\EEG_Project\NewData\edited_EEG_data'; % with IIR
 %% choosing subjects
 subjs      = find_subject_names(src_dir);
 pick_subj  = listdlg('PromptString', 'Select subjects;', 'SelectionMode',...

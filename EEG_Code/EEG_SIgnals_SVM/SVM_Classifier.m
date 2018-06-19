@@ -13,7 +13,7 @@ function [percentage] = SVM_Classifier(cov_mat,dat_lengths, full_label_struct, l
 % [trainedClassifier, ~] = LDA_7_trainClassifier(train_data);
 % [trainedClassifier, ~] = Boost7_trainClassifier(train_data);
 % [trainedClassifier, ~] = LinSVM7trainClassifier(train_data);
-[trainedClassifier, ~] = SVMlinear6subjtrainClassifier(train_data);
+[trainedClassifier, ~] = LinSVM_8Subj_trainClassifier(train_data);
 data_for_testing = test_data(:,2:end);
 yfit              = trainedClassifier.predictFcn(data_for_testing);
 

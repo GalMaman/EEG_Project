@@ -17,12 +17,10 @@ for ii = 1:N
             mkdir(name_str , ['Stim_0', num2str(jj)]);
         end
         
-        mkdir(stim_str , 'clean');      % clean data with bad electrodes
-        mkdir(stim_str , 'good_data');  % data with only good electrodes
-        mkdir(stim_str , 'cov');        % cov matrices
-        mkdir(stim_str , 'distances');  % distances from means
-        mkdir(stim_str , 'bad_electrodes');  % distances from means
-        
+        mkdir(stim_str , 'good_elec_data');      % data with only good electrodes
+        mkdir(stim_str , 'good_data');  % clean data with good electrodes
+        mkdir(stim_str , 'bad_electrodes');  % save electrodes table for each subject
+        mkdir(stim_str , 'clean');  % trials that were not rejected        
     end
 end
         
