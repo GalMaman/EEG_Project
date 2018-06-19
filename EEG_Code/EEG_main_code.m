@@ -239,10 +239,11 @@ bar(gr_bar);
 ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 % title('Success Percentage','interpreter','latex');
-legend([{'Previous Work - Riemannian Geometry'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+legend([{'Baseline - Riemannian Geometry'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
 % set(ax,'FontSize',12);
-set(ax,'FontSize',17,'XTick',1:size(subjs),'XTickLabel',...
-   1:8);
+set(ax,'FontSize',17,'XTick',1:8,'XTickLabel',...
+  string(subj_names),'YTick',0:10:100);
+set(ax,'interpreter','latex');
 ylim([0 100]);
 
 %%

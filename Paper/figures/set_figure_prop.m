@@ -1,6 +1,7 @@
 function [] = set_figure_prop()
 
 % set axes system
+
 xL = xlim;
 yL = ylim;
 line(xL, [0 0],'color','k','linewidth',0.1); 

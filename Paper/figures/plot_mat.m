@@ -1,86 +1,27 @@
-% 
-% cd('C:\Users\User\Desktop\gal\Technion\EEG_Project\Paper\figures\example_rotation_8_subj');
-% 
-% %% Riemannian Geometry
-% load data.mat;
-% title_str = [];
-% 
-% %% PT
-% load data_PT.mat;
-% title_str = 'with PT';
-% 
-% %% Rotation
-% load data_rot.mat;
-% title_str = 'with PT and rotation';
+function [] = plot_mat(pca_vec,full_label_struct,vAxis,title_str)
 
-%%
-close all
-clear
-
-%%
-RiemannianGeometry    = 1;
-PtGeometry            = 2;
-PtAndRotationGeometry = 3;
-MtGeometry            = 4;
-
-subject      = 2;
-GeometryCase = PtAndRotationGeometry;
-
-dirPath = ['./example_rotation_', num2str(subject), '_subj_MT/'];
-switch (GeometryCase)
-    case RiemannianGeometry
-        fileName  = 'Riemannian_Geometry/data.mat';
-        title_str = 'Riemannian_Geometry';
-        vAxis     = [-5.5, 5, -4, 3];
-    case PtGeometry
-        fileName  = 'PT/data_PT.mat';
-        title_str = 'PT';
-        vAxis     = [-6.2, 5, -2, 2.7];
-    case PtAndRotationGeometry
-        fileName  = 'PT_and_rotation/data_rot.mat';
-        title_str = 'PT and rotation';
-        vAxis     = [-6.5, 4.8, -2, 1.8];
-    case MtGeometry
-        fileName  = 'MT/data_MT.mat';
-        title_str = 'MT and rotation';
-        vAxis     = [-6.5, 5.1, -2.2, 2.5];
-end
-
-load([dirPath, fileName]);
-load([dirPath, 'labels.mat']);
-full_label_struct{4}(:) = lower(full_label_struct{4}(:));
-
-%%
-% full_label_struct{4}(:) = eraseBetween(full_label_struct{4}(:),'_',' ');
-% full_label_struct{4}(:) = lower(extractAfter(full_label_struct{4}(:),"_"));
-
-%%
 ax         = [];
-subj_names = {'C01';'C02';'C03';'C04';'C05';'C06';'C07';'C08';'C10';'C11';'C12';'S01';'S02';'S03';'S04';'S05'};
+subj_names = {'Subject 1';'Subject 2';'Subject 3';'Subject 4';'Subject 5';'Subject 6';'Subject 7';'Subject 8';'Subject 10';'Subject 11';'Subject 12';'S01';'S02';'S03';'S04';'S05'};
+num_sub    = unique(full_label_struct{2});
+N          = length(num_sub);
 % color_list = {[0.8 0 0];
 %               [1 0.8 0];
 %               [0 0.2 0.6];
 %               [0.6 0 0.4];
 %               [0.2 0.6 0.6]}; % for 3 stimulations
-color_list = num2cell(cat(1,parula(8),[[1 0 0];[0 1 0];[1 0 1]]),2);
-% color_list = {'y';'b';'r';'g';'m'};
-% poster:
-% vAxis     = [-25, 20, -9, 8]; title_str = 'Riemannian Geometry';
-% vAxis     = [-20, 15, -7, 10]; title_str = 'PT'; %PT
-vAxis     = [-19, 16, -14, 8]; title_str = 'PT and Rotation'; %ROT
+color_list = num2cell(cat(1,parula(N),[[1 0 0];[0 1 0];[1 0 1]]),2);
+
 
 figure; hold on; grid on; ax(1) = gca;
-num_sub = unique(full_label_struct{2});
-for ii = 1 : length(num_sub)
+for ii = 1 : N
     idx = find(full_label_struct{2} == num_sub(ii));
-    scatter(pca_vec(1,idx), pca_vec(2,idx), 120,'MarkerFaceColor',color_list{ii},'MarkerEdgeColor','k', 'Marker', 'square', 'LineWidth', 0.05);  
+    scatter(pca_vec(1,idx), pca_vec(2,idx), 240 - 10*N,'MarkerFaceColor',color_list{ii},'MarkerEdgeColor','k', 'Marker', 'square', 'LineWidth', 0.05);  
 end
 subj_str = subj_names(num_sub);
 xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
 h = legend(subj_str(:), 'location','best'); set(h, 'Interpreter', 'Latex');
-% title(title_str, 'Interpreter', 'Latex');
-title(sprintf('PCA map, colored per subject with %s', title_str),'interpreter','latex');
+title(sprintf('Colored per subject with %s', title_str),'interpreter','latex');
 axis(vAxis);
 set_figure_prop;
 
@@ -88,14 +29,14 @@ figure; hold on; grid on; ax(2) = gca;
 num_stim = unique(full_label_struct{3});
 for ii = 1 : length(num_stim)
     idx = find(full_label_struct{3} == num_stim(ii));
-    scatter(pca_vec(1,idx), pca_vec(2,idx),80,'MarkerFaceColor',color_list{ii+8},'MarkerEdgeColor','k','LineWidth', 0.05);
+    scatter(pca_vec(1,idx), pca_vec(2,idx),180 - 10*N,'MarkerFaceColor',color_list{ii+N},'MarkerEdgeColor','k','LineWidth', 0.05);
 end
 xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
 legend(full_label_struct{4}(:), 'Interpreter', 'latex', 'location', 'best');
-title(sprintf('PCA map, colored per stimulus with %s', title_str),'interpreter','latex');
+title(sprintf('Colored per stimulus with %s', title_str),'interpreter','latex');
 axis(vAxis); 
 set_figure_prop;
-
-linkprop(ax,{'CameraPosition','CameraUpVector'}); 
+% linkprop(ax,{'CameraPosition','CameraUpVector'}); 
+set(ax,'XAxisLocation','bottom');
 set(ax, 'FontSize', 16);
