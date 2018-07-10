@@ -8,7 +8,7 @@ for ii = 1 : length(num_sub)
     subj_sutruct{ii,1} = cov_mat(:, idx);
     subj_sutruct{ii,2} = AlgoPCA(subj_sutruct{ii,1});
 %     subj_sutruct{ii,3} = subj_sutruct{ii,2}' * subj_sutruct{ii,1};
-%     [subj_sutruct{ii,2},subj_sutruct{ii,3}] = AlgoPCA(subj_sutruct{ii,1});
+    [subj_sutruct{ii,2},subj_sutruct{ii,3}] = AlgoPCA(subj_sutruct{ii,1});
 end
 
 
@@ -17,6 +17,9 @@ vSub = setdiff(1:length(num_sub), sub_idx);
 for ii = vSub
 %     vMult              = sign(sum(subj_sutruct{sub_idx,3} .* subj_sutruct{ii,3},2))';
     vMult              = sign(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
+%     cosTeta = acosd(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
+%     vMult = ones(size(cosTeta));
+%     vMult(or(and(cosTeta > 60,cosTeta < 90), cosTeta > 120)) = -1;
     subj_sutruct{ii,2} = subj_sutruct{ii,2} .* vMult;
 end
 
@@ -25,5 +28,6 @@ pca_vec_rot = [];
 for ii = 1 : length(num_sub)
     temp    = subj_sutruct{ii,2}' * (subj_sutruct{ii,1} - mean(subj_sutruct{ii,1},2)) + mean(subj_sutruct{ii,1},2);
 %     temp =  (subj_sutruct{ii,2}(:,1:size(subj_sutruct{ii,3},2)) .* (diag(subj_sutruct{sub_idx,3}))'.^(1/2) .* (diag(subj_sutruct{ii,3}))'.^(-1/2))' * subj_sutruct{ii,1};
+    temp = subj_sutruct{ii,2}' * subj_sutruct{ii,3};
     pca_vec_rot = [pca_vec_rot temp];
 end

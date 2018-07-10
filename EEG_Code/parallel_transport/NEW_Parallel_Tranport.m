@@ -9,17 +9,14 @@ for jj = 1 : num_of_subj
 end
 Riemannian_3Dmat = [];
 % Riemannian_3Dmat = cov_3Dmat{1,1};
-Pmean            = RiemannianMean(RiemannianMean_3Dmat(:,:,pick_subj<12)); % calculating mean of all riemannian means
+% Pmean            = RiemannianMean(RiemannianMean_3Dmat(:,:,pick_subj<12)); % calculating mean of all riemannian means
+Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
 % Pmean = RiemannianMean_3Dmat(:,:,1);
 for jj = 1 : num_of_subj
      E  = (Pmean * (RiemannianMean_3Dmat(:,:,jj))^(-1))^(0.5);
      K  = size(cov_3Dmat{1,jj}, 3);
      for kk = 1 : K  % performing parallel transport for all the trials
-
-         cov_3Dmat{1,jj}(:, :, kk) = E * cov_3Dmat{1,jj}(:, :, kk) * E'; 
-
-%           cov_3Dmat{1,jj}(:, :, kk) = SchildLadder(RiemannianMean_3Dmat(:,:,jj), Pmean, mC);
-         
+         cov_3Dmat{1,jj}(:, :, kk) = E * cov_3Dmat{1,jj}(:, :, kk) * E';          
      end
      Riemannian_3Dmat = cat(3, Riemannian_3Dmat, cov_3Dmat{1,jj}); 
 end

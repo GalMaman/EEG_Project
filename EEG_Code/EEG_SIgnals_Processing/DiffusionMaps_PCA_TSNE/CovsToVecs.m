@@ -16,7 +16,7 @@ function mX = CovsToVecs(Covs, white, Riemannian_Mean)
     mW = sqrt(2) * ones(D) - (sqrt(2) - 1) * eye(D);
     for kk = 1 : K
         if white == 0
-            Skk      = logm(Covs(:,:,kk)) .* mW;
+            Skk      = mSQRT * logm(mCSR * Covs(:,:,kk) * mCSR) * mSQRT .* mW;
         else
             Skk      = logm(mCSR * Covs(:,:,kk) * mCSR) .* mW;
         end
