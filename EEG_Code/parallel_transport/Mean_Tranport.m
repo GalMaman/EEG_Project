@@ -5,5 +5,5 @@ cov_mat_mean = [];
 
 for jj = 1 : num_of_subj
     j_RiemannianMean = RiemannianMean(cov_3Dmat{1,jj}); %calculating riemannian mean for each subject
-    cov_mat_mean     = [cov_mat_mean CovsToVecs(cov_3Dmat{1,jj}, j_RiemannianMean)];
+    cov_mat_mean     = [cov_mat_mean CovsToVecs(cov_3Dmat{1,jj},0, j_RiemannianMean)];
 end

@@ -7,6 +7,7 @@ for ii = 1 : length(num_sub)
     idx                = find(full_label_struct{2} == num_sub(ii));
     subj_sutruct{ii,1} = cov_mat(:, idx);
     subj_sutruct{ii,2} = AlgoPCA(subj_sutruct{ii,1});
+%     subj_sutruct{ii,3} = subj_sutruct{ii,2}' * subj_sutruct{ii,1};
 %     [subj_sutruct{ii,2},subj_sutruct{ii,3}] = AlgoPCA(subj_sutruct{ii,1});
 end
 
@@ -14,6 +15,7 @@ end
 sub_idx  = 1;
 vSub = setdiff(1:length(num_sub), sub_idx);
 for ii = vSub
+%     vMult              = sign(sum(subj_sutruct{sub_idx,3} .* subj_sutruct{ii,3},2))';
     vMult              = sign(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
     subj_sutruct{ii,2} = subj_sutruct{ii,2} .* vMult;
 end

@@ -1,4 +1,4 @@
-function [cov_mat_PT, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat)
+function [cov_mat_PT, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat, pick_subj)
 
 num_of_subj          = size(cov_3Dmat,2);
 RiemannianMean_3Dmat = [];
@@ -9,7 +9,7 @@ for jj = 1 : num_of_subj
 end
 Riemannian_3Dmat = [];
 % Riemannian_3Dmat = cov_3Dmat{1,1};
-Pmean            = RiemannianMean(RiemannianMean_3Dmat); % calculating mean of all riemannian means
+Pmean            = RiemannianMean(RiemannianMean_3Dmat(:,:,pick_subj<12)); % calculating mean of all riemannian means
 % Pmean = RiemannianMean_3Dmat(:,:,1);
 for jj = 1 : num_of_subj
      E  = (Pmean * (RiemannianMean_3Dmat(:,:,jj))^(-1))^(0.5);

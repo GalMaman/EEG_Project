@@ -6,7 +6,7 @@ addpath(genpath('./'));
 
 %% parameters
 % src_dir       = 'E:\EEG_Project\CleanData\edited_EEG_data';
-src_dir       = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
+src_dir       = 'E:\EEG_Project\GoodData\edited_EEG_data';
 % src_dir     = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
 num_of_trials = 50; % to load all trials enter inf 
 
@@ -31,8 +31,11 @@ disp('    --finished loading all trials');
 toc
 
 %% finding good electrodes
-load bad_elec_subj.mat
+load BadElectrodes.mat
 good_elec   = find(sum(hist_sub(:,pick_subj),2) == 0);
+% load(['E:\EEG_Project\NewData2\edited_EEG_data\good_elecs\good_electrodes.mat']);
+
+% good_elec = good_electrodes;
 
 %% choose best electrodes
 tic;
@@ -49,6 +52,7 @@ score                  = elec_score(idx_vecs(1));
 best_data_cell = creating_good_elec_cell(data_cell, pick_stims, pick_subj, elec_vec);
 if length(pick_subj) == 1
 	best_data_cell                              = creating_cov_cell(best_data_cell, pick_stims, pick_subj,0);
+%     best_data_cell                              = creating_fourier_cell(best_data_cell, pick_stims, pick_subj,1:100);
     [cov_3Dmat, dat_lengths, full_label_struct] = CellToMat3D(best_data_cell,label_struct); 
     [best_mat, ~]                               = cov2vec(cov_3Dmat);
     [U]                                         = AlgoPCA(best_mat);
@@ -127,8 +131,9 @@ ylabel('Success Percentage','interpreter','latex');
 xlabel('Electrode Number','interpreter','latex');
 title('Electrodes Score','interpreter','latex');
 % legend([{'C01'};{'C02'};{'C03'};{'C04'}],'interpreter','latex');
-legend(subjs{1:11},'interpreter','latex');
+legend(subjs{12:end},'interpreter','latex');
 
 figure;
 imagesc(score_per_subj); colorbar; colormap('spring');
 title('Electrodes Score','interpreter','latex');
+set(gca,'XTick',1:5);

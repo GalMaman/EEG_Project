@@ -11,7 +11,8 @@ addpath(genpath('./'));
 % src_dir = 'E:\EEG_Project\CleanData\edited_EEG_data'; % old data
 % src_dir = 'E:\EEG_Project\CleanIIR\edited_EEG_data'; % IIR filtered
 % src_dir = 'E:\EEG_Project\FinalCleanData\edited_EEG_data'; % with IIR
-src_dir = 'E:\EEG_Project\NewData2\edited_EEG_data';
+% src_dir = 'E:\EEG_Project\NewData2\edited_EEG_data';
+src_dir = 'E:\EEG_Project\GoodData\edited_EEG_data'; 
 % src_dir = 'E:\EEG_Project\DataNoFilter\edited_EEG_data';
 % src_dir = 'E:\EEG_Project\NewCleanData\edited_EEG_data'; % FIR filtered
 % src_dir            = 'C:\Users\Oryair\Desktop\Workarea\EEG_Project\CleanData\edited_EEG_data';
@@ -52,13 +53,14 @@ disp('    --finished loading all trials');
 toc
 % norm_data = 1;
 
+% load(['E:\EEG_Project\NewData2\edited_EEG_data\good_elecs\good_electrodes.mat']);
 
 % load bad_elec_subj.mat
 % good_elec = find(sum(hist_sub,2) == 0);
 % load bad_elecs.mat
 % good_elec2 = find(sum(hist_sub(:,1:11),2) == 0);
 % good_elec = intersect(good_elec1,good_elec2);
-% load_data_cell = creating_good_elec_cell(load_data_cell, pick_stims, pick_subj, good_elec);
+% load_data_cell = creating_good_elec_cell(load_data_cell, pick_stims, pick_subj, good_electrodes);
 
 %% ICA
 [data_cell] = dataICA(load_data_cell, pick_stims, pick_subj);
@@ -129,7 +131,7 @@ end
 %     toc
 % end
 %%
-[cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat);
+[cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat, pick_subj);
 disp('    --found Riemanien mean with PT');
 toc
 
@@ -170,7 +172,7 @@ toc
 if rot_param == 1
     [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
     [ax2]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
-    linkprop([ax1 ax2] ,{'CameraPosition','CameraUpVector'});
+%     linkprop([ax1 ax2] ,{'CameraPosition','CameraUpVector'});
 end
 %%
 % if rot_param == 1
@@ -234,12 +236,12 @@ ylim([0 100]);
 
 %% plot all
 figure(); ax = gca;
-gr_bar = [success_subj_old success_subj_PT success_subj_ROT];
+gr_bar = [success_subj_old success_subj_PT success_subj_mean success_subj_ROT];
 bar(gr_bar);
 ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 % title('Success Percentage','interpreter','latex');
-legend([{'Baseline - Riemannian Geometry'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+legend([{'Baseline - Riemannian Geometry'};{'PT'};{'MT'};{'PT and Rotation'}],'interpreter','latex');
 % set(ax,'FontSize',12);
 set(ax,'FontSize',17,'XTick',1:8,'XTickLabel',...
   string(subj_names),'YTick',0:10:100);

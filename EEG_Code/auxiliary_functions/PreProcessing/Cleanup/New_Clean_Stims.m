@@ -1,4 +1,4 @@
-function [ output_args ] = New_Clean_Stims(edited_EEG_data, subj_names, stims_vec )
+function [ ] = New_Clean_Stims(edited_EEG_data, subj_names, stims_vec )
 
 %% Regular cleanup:
 N             = length(subj_names);
@@ -13,12 +13,12 @@ for ii = 1:N
             stim_src_str = [edited_EEG_data, '\', subj_names{ii}, '\Stim_', ...
                                                 num2str(jj), '\good_elec_data'];
             stim_dest_str = [edited_EEG_data, '\', subj_names{ii}, '\Stim_', ...
-                                                num2str(jj), '\good_data'];                                
+                                                num2str(jj), '\new_data'];                                
         else
             stim_src_str = [edited_EEG_data, '\', subj_names{ii}, '\Stim_0', ...
                                                 num2str(jj), '\good_elec_data'];
             stim_dest_str = [edited_EEG_data, '\', subj_names{ii}, '\Stim_0', ...
-                                                num2str(jj), '\good_data'];                                 
+                                                num2str(jj), '\new_data'];                                 
         end
         % Cleaning the data and downsampling it
 
@@ -48,7 +48,7 @@ for ii = 1:N
                 % Convolute the data with the BPF:
                 vB = [1, -1];
                 vA = [1, -0.97];
-                dnsmpl_dat = filter(vB, vA, dnsmpl_dat);
+%                 dnsmpl_dat = filter(vB, vA, dnsmpl_dat')';
 %                 dnsmpl_dat = conv2(dnsmpl_dat, BPF, 'same');
                 str_split = strsplit(allnames{kk},'_good_elec_data');
                 new_name  = [str_split{1}, '_good_data.mat'];

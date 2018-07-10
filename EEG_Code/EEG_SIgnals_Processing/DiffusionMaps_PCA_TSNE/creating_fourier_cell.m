@@ -9,8 +9,10 @@ for ii = 1 : length(pick_stims)
             N = size(data_cell{ii,jj}{kk,1},1);
             for nn = 1 : N
                 if length(n_fourier) > 1
-                    temp = abs(fft( data_cell{ii,jj}{kk,1}(nn,:)));
-%                     temp_data_cell{ii,jj}{kk,1}(nn,:) = temp(4:80);
+%                     data_cell{ii,jj}{kk,1} = (data_cell{ii,jj}{kk,1} - mean(data_cell{ii,jj}{kk,1},2)) ./ std(data_cell{ii,jj}{kk,1},[],2);
+%                     data_cell{ii,jj}{kk,1} = data_cell{ii,jj}{kk,1}- mean(data_cell{ii,jj}{kk,1},1);
+                    temp = abs(fftshift(fft( data_cell{ii,jj}{kk,1}(nn,:))));
+%                     temp = temp(1:ceil(end/2));
                     new_data_cell{ii,jj}{kk,1}(nn,:) = temp;
                 else
                     temp_data_cell{ii,jj}{kk,1}(nn,:) = abs(fft( data_cell{ii,jj}{kk,1}(nn,:),n_fourier));
