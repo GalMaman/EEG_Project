@@ -1,19 +1,19 @@
 close all
 clear
 
-dirPath = 'E:\EEG_Project\EEG_data_organized\C03\Stim_3\';
+dirPath = 'E:\EEG_Project\GoodData\edited_EEG_data\C03\Stim_03\good_data\';
 Files   = dir([dirPath, '*trial*.mat']);
 L       = length(Files);
 amplitudeThr = 10;
-stdMaxVal = 5e-4;
-% stdMaxVal = inf;
-stdMinVal    = 2.5e-6;
+% stdMaxVal = 2e-4;
+stdMaxVal = inf;
+stdMinVal    = 1e-7;
 zeroThr   = 10;
 figure;
 for ii = 1 :10: L
     fileName = Files(ii).name;
     load([dirPath, fileName]);
-    
+    F = good_data;
     [Ns, sigLength] = size(F);
 %     for nn = 1 : Ns
 %        plot(F(nn,:)); title([fileName, ', #', num2str(nn)]); drawnow; pause(1);
@@ -35,7 +35,7 @@ for ii = 1 :10: L
     Fmean    = F - mean(F,2);
     cF       = num2cell(Fmean,2);
     vZero    = cellfun(@(x)zero_cross(x),  cF);
-    vValidIdx       = (vStd < stdMaxVal) .* (vStd > stdMinVal) ;
+    vValidIdx       = (vStd < stdMaxVal) .* (vStd > stdMinVal);
 %     vValidIdx       = vValidIdx .* (stdDiff/median(stdDiff) < amplitudeThr) .* (vZero > zeroThr) .* max((vZero > 20),(vStd < 2.5e-5));
     F(~vValidIdx,:) = [];
     vN(~vValidIdx)  = [];

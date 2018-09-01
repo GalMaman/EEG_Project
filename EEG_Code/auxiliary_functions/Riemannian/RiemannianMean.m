@@ -2,8 +2,8 @@ function M = RiemannianMean(tC)
 
 Np = size(tC, 3);
 M  = mean(tC, 3);
-for ii = 1 : 20
-% for ii = 1 : 200
+% for ii = 1 : 20
+for ii = 1 : 200
     A = M ^ (1/2);      %-- A = C^(1/2)
     B = A ^ (-1);       %-- B = C^(-1/2)
         

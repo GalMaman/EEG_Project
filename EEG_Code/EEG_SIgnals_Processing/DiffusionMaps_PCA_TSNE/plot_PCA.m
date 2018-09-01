@@ -49,7 +49,8 @@ for jj = 1 : 4
     if size(pca_vec,1) >= 3
         zlabel('$\psi_3$','Interpreter','latex');
     end
-    legend(figure_struct{jj,4}(:), 'Interpreter', 'latex', 'location','best');
+    ClickableLegend(figure_struct{jj,4}(:));
+%     legend(figure_struct{jj,4}(:), 'Interpreter', 'latex', 'location','best');
     title(sprintf(figure_struct{jj,2}),'interpreter','latex');
 end
 

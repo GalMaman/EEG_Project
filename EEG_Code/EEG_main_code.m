@@ -1,5 +1,6 @@
 clear;
 clc;
+close all;
 
 %%
 addpath(genpath('./'));
@@ -92,7 +93,7 @@ disp('    --finished calculating PLV matrices');
 toc
 
 %% calculate covariance matrices
-norm_data = 0;
+norm_data = 1;
 if covariance_param == 1
     [data_cell] = creating_cov_cell(load_data_cell, pick_stims, pick_subj,norm_data);
     disp('    --finished calculating covariance matrices');
@@ -131,7 +132,7 @@ end
 %     toc
 % end
 %%
-[cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat, pick_subj);
+[cov_mat_PT_N, Riemannian_3Dmat] = NEW_Parallel_Tranport(cov_3Dmat, full_label_struct);
 disp('    --found Riemanien mean with PT');
 toc
 
@@ -152,8 +153,8 @@ end
 
 %% PCA PT
 if (pca_param == 1)&&(PT_param == 1)
-    [U]        = AlgoPCA(cov_mat_PT_N);
-    pca_vec_PT = U' * cov_mat_PT_N;
+    [U_PT]      = AlgoPCA(cov_mat_PT_N);
+    pca_vec_PT  = U_PT' * cov_mat_PT_N;
     [ax1]       = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
     linkprop(ax1,{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
@@ -172,7 +173,7 @@ toc
 if rot_param == 1
     [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
     [ax2]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
-%     linkprop([ax1 ax2] ,{'CameraPosition','CameraUpVector'});
+    linkprop([ax2] ,{'CameraPosition','CameraUpVector'});
 end
 %%
 % if rot_param == 1
@@ -340,7 +341,7 @@ figure(); hold on; ax(1) = gca;
 num_sub = unique(full_label_struct{2});
 for ii = 1 : length(num_sub)
     idx = find(full_label_struct{2} == num_sub(ii));
-    scatter3(pca_cov_mat(1,idx), pca_cov_mat(2,idx), pca_cov_mat(3,idx),100, full_label_struct{2}(idx), 'Fill');  
+    scatter3(pca_cov_mat(1,idx), pca_cov_mat(2,idx), pca_cov_mat(3,idx),50, full_label_struct{2}(idx), 'Fill');  
 end
 
 xlabel('$\psi_1$','Interpreter','latex');
@@ -353,7 +354,7 @@ figure(); hold on; ax(2) = gca;
 num_stim = unique(full_label_struct{3});
 for ii = 1 : length(num_stim)
     idx = find(full_label_struct{3} == num_stim(ii));
-    scatter3(pca_cov_mat(1,idx), pca_cov_mat(2,idx), pca_cov_mat(3,idx),100, full_label_struct{3}(idx), 'Fill'); 
+    scatter3(pca_cov_mat(1,idx), pca_cov_mat(2,idx), pca_cov_mat(3,idx),50, full_label_struct{3}(idx), 'Fill'); 
 end
 xlabel('$\psi_1$','Interpreter','latex');
 ylabel('$\psi_2$','Interpreter','latex');
