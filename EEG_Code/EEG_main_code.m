@@ -30,7 +30,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 100; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -70,12 +70,12 @@ toc
 
 %% pick electrodes
 all_elec = 1:68;
-elec_array = [5,28,46,50];
+elec_array = [2,4,6,10,14,24,27,36,53,59,61];
 % elec_array  = [2;4;5;6;8;9;10;11;12;13;14;15;16;17;18;19;20;21;22;23;24;25;26;27;28;29;30;31;32;35;36;37;38;39;40;41;42;44;45;46;47;48;49;50;51;52;53;54;55;56;57;58;59;60;61;62;63;64;67;68];
 % elec_array = [4, 14, 26, 41, 53];
 % good_elec = [4;5;6;8;9;10;11;12;13;14;17;18;20;21;26;27;30;35;36;37;39;40;41;44;45;50;51;53;55;57;58;59];
 if choose_elec_param == 1
-    [data_cell] = choose_electrodes(data_cell, pick_stims, pick_subj, elec_array,all_elec);
+    [load_data_cell] = choose_electrodes(load_data_cell, pick_stims, pick_subj, elec_array,all_elec);
 end
 
 %% FFT 
@@ -93,7 +93,7 @@ disp('    --finished calculating PLV matrices');
 toc
 
 %% calculate covariance matrices
-norm_data = 1;
+norm_data = 0;
 if covariance_param == 1
     [data_cell] = creating_cov_cell(load_data_cell, pick_stims, pick_subj,norm_data);
     disp('    --finished calculating covariance matrices');

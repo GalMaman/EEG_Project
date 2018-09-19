@@ -17,11 +17,11 @@ function mX = CovsToVecs(Covs, white, Riemannian_Mean)
     for kk = 1 : K
         if white == 0
             Skk      = mSQRT * logm(mCSR * Covs(:,:,kk) * mCSR) * mSQRT .* mW;
+%             Skk      = logm(Covs(:,:,kk)) .* mW;
         else
             Skk      = logm(mCSR * Covs(:,:,kk) * mCSR) .* mW;
         end
         mX(:,kk) = Skk(triu(true(size(Skk))));
-%         mX(:,kk) = mX(:,kk) / norm(mX(:,kk));
     end
     
     

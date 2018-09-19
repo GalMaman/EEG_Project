@@ -7,6 +7,7 @@ if nargout == 1
     [U, ~, ~] = svd(new_mat);
 else
 	[U, S, V] = svd(new_mat);
-%     S = S ./ diag(S)';
+%     S = S ./ max(diag(S));
     Y = U * S * V';
+    
 end

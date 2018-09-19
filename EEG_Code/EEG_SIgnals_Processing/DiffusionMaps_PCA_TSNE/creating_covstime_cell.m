@@ -11,7 +11,7 @@ for ii = 1:length(pick_stims)
             elec_mat  = calculate_elec_spectrogram(data_cell{ii,jj}{kk,1});
             dist_mat  = calculate_dist_mat(elec_mat);
             epsilon   = median(dist_mat(:));
-            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / (8 * epsilon));
+            new_data_cell{ii,jj}{kk,1} = exp(-dist_mat / (2 * epsilon));
         end
     end
 end

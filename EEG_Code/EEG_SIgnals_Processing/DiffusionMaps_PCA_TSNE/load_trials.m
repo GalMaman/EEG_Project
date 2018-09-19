@@ -29,7 +29,7 @@ for ind_subj = 1:length(pick_subj)
             if (num_of_trials == inf) || (num_of_trials > length(temp_trials))
                 load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials);
             else
-                load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(51:50+num_of_trials));
+                load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(1:50+num_of_trials));
 %                 trials_idx  = randperm(length(temp_trials));
 %                 load_struct = cellfun(@(X) load(X, 'clean_data'), temp_trials(trials_idx(1:num_of_trials)));
             end
