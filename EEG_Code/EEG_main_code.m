@@ -30,7 +30,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 100; % to load all trials enter inf 
+num_of_trials      = 50; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -144,22 +144,22 @@ disp('    --found Riemanien mean with MT');
 ax1     = [];
 [U]     = AlgoPCA(cov_mat);
 pca_vec = U' * cov_mat;
-if (pca_param == 1)&&(no_PT_param == 1)
+% if (pca_param == 1)&&(no_PT_param == 1)
     [ ax ] = plot_PCA(pca_vec, full_label_struct, []);
     linkprop(ax,{'CameraPosition','CameraUpVector'}); 
     disp('    --finished PCA');
     toc
-end
+% end
 
 %% PCA PT
-if (pca_param == 1)&&(PT_param == 1)
+% if (pca_param == 1)&&(PT_param == 1)
     [U_PT]      = AlgoPCA(cov_mat_PT_N);
     pca_vec_PT  = U_PT' * cov_mat_PT_N;
     [ax1]       = plot_PCA(pca_vec_PT, full_label_struct, 'with PT');
     linkprop(ax1,{'CameraPosition','CameraUpVector'});
     disp('    --finished PCA');
     toc
-end
+% end
 
 %% PCA MT
 [U]        = AlgoPCA(cov_mat_mean);
@@ -170,11 +170,11 @@ disp('    --finished PCA');
 toc
 
 %% pca per subject (rotation) with PT
-if rot_param == 1
+% if rot_param == 1
     [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
     [ax2]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
     linkprop([ax2] ,{'CameraPosition','CameraUpVector'});
-end
+% end
 %%
 % if rot_param == 1
 %     [pca_vec_rot] = rotation_pca(cov_mat_mean, full_label_struct);
@@ -236,6 +236,7 @@ set(ax,'FontSize',16,'XTick',1 : size(all_clsf,1),'XTickLabel',...
 ylim([0 100]);
 
 %% plot all
+ax = [];
 figure(); ax = gca;
 gr_bar = [success_subj_old success_subj_PT success_subj_mean success_subj_ROT];
 bar(gr_bar);
