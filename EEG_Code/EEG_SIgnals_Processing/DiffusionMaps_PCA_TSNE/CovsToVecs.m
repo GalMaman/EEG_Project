@@ -22,6 +22,7 @@ function mX = CovsToVecs(Covs, white, Riemannian_Mean)
             Skk      = logm(mCSR * Covs(:,:,kk) * mCSR) .* mW;
         end
         mX(:,kk) = Skk(triu(true(size(Skk))));
+%         mX(:,kk) = mX(:,kk) / norm(mX(:,kk));
     end
     
     

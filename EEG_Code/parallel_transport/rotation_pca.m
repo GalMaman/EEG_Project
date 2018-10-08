@@ -1,4 +1,4 @@
-function [pca_vec_rot] = rotation_pca(cov_mat, full_label_struct)
+function [pca_vec_rot,angles] = rotation_pca(cov_mat, full_label_struct)
 
 
 num_sub      = unique(full_label_struct{2});
@@ -11,11 +11,28 @@ for ii = 1 : length(num_sub)
     [subj_sutruct{ii,2},subj_sutruct{ii,3},subj_sutruct{ii,4}] = AlgoPCA(subj_sutruct{ii,1});
 end
 
-
+angles   = zeros(length(num_sub), size(subj_sutruct{1,2},2));
 sub_idx  = 1;
 vSub = setdiff(1:length(num_sub), sub_idx);
 for ii = vSub
+    angles(ii,:)       = acosd(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
     vMult              = sign(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
+    if ii == 3
+%         angle = acosd(sum(subj_sutruct{sub_idx,2} .* subj_sutruct{ii,2}));
+        vMult(2) = -1 * vMult(2);
+    elseif ii == 5
+        vMult(1) = -1 * vMult(1);
+        vMult(2) = -1 * vMult(2);
+%     elseif ii == 6 
+%         vMult(2) = -1 * vMult(2);  
+%     elseif ii == 8 
+%         vMult(1) = -1 * vMult(1);
+%         vMult(2) = -1 * vMult(2);
+%     elseif ii == 10
+%         vMult(2) = -1 * vMult(2);
+    end
+        
+            
     subj_sutruct{ii,2} = subj_sutruct{ii,2} .* vMult;
 end
 

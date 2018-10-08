@@ -2,22 +2,26 @@ function [percentage] = SVM_Classifier(cov_mat,dat_lengths, full_label_struct, l
 
 
 [PCA_matrix, train_data, test_data, idx_test] = SVM_script_for_PCA(cov_mat', dat_lengths, full_label_struct, leave_out,1);
+data_for_testing                              = test_data(:,2:end);
 
 
-
-% [trainedClassifier, ~] = boost4_trainClassifier(train_data);
-% [trainedClassifier, ~] = bagged4trainClassifier(train_data);
-% [trainedClassifier, ~] = linear4_trainClassifier(train_data);
-% [trainedClassifier, ~] = CoarseTree4trainClassifier(train_data);
-% [trainedClassifier, ~] = SVMlinear5subjtrainClassifier(train_data);
-[trainedClassifier, ~] = LinSVM8Subj_trainClassifier(train_data);
+% [trainedClassifier, ~] = LinSVM8Subj_trainClassifier(train_data);
 % [trainedClassifier, ~] = QuadSVM8subj_trainClassifier(train_data);
-% [trainedClassifier, ~] = LinSVM7Subj_trainClassifier(train_data);
-% [trainedClassifier, ~] = LSVM8trainClassifier(train_data);
-data_for_testing = test_data(:,2:end);
-yfit              = trainedClassifier.predictFcn(data_for_testing);
+% % [trainedClassifier, ~] = LinSVM7Subj_trainClassifier(train_data);
+% [trainedClassifier, ~] = baggedTree_trainClassifier(train_data);
+% yfit              = trainedClassifier.predictFcn(data_for_testing);
+% % % 
+linaerSvmTemplate = templateSVM('Standardize', true);
+mdlLinearSVM      = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', linaerSvmTemplate);
+yfit              = mdlLinearSVM.predict(data_for_testing);
 
+% polSvmTemplate = templateSVM('Standardize', true, 'KernelFunction', 'polynomial','PolynomialOrder',3);
+% mdlPolySVM      = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', polSvmTemplate);
+% yfit              = mdlPolySVM.predict(data_for_testing);
 
+% knnSvmTemplate    = templateKNN('NumNeighbors', 10);
+% mdlKnn            = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', knnSvmTemplate);
+% yfit              = mdlKnn.predict(data_for_testing);
 
 known_label     = test_data(:,1);
 predicted_label = yfit;

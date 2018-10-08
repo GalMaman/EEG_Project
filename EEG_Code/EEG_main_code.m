@@ -30,7 +30,7 @@ tSNE_param         = 1;
 diff_euc_param     = 1;
 diff_riem_param    = 0;
 tSNE_diffMap_param = 0;
-num_of_trials      = 50; % to load all trials enter inf 
+num_of_trials      = 100; % to load all trials enter inf 
 svm_param          = 0;
 
 %% choosing subjects
@@ -171,7 +171,7 @@ toc
 
 %% pca per subject (rotation) with PT
 % if rot_param == 1
-    [pca_vec_rot] = rotation_pca(cov_mat_PT_N, full_label_struct);
+    [pca_vec_rot,angles] = rotation_pca(cov_mat_PT_N, full_label_struct);
     [ax2]          = plot_PCA(pca_vec_rot, full_label_struct, 'with PT and rotation');
     linkprop([ax2] ,{'CameraPosition','CameraUpVector'});
 % end
@@ -238,14 +238,14 @@ ylim([0 100]);
 %% plot all
 ax = [];
 figure(); ax = gca;
-gr_bar = [success_subj_old success_subj_PT success_subj_mean success_subj_ROT];
+gr_bar = [success_subj_old success_subj_mean success_subj_PT success_subj_ROT];
 bar(gr_bar);
 ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 % title('Success Percentage','interpreter','latex');
-legend([{'Baseline - Riemannian Geometry'};{'PT'};{'MT'};{'PT and Rotation'}],'interpreter','latex');
+legend([{'Baseline - Riemannian Geometry'};{'MT'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
 % set(ax,'FontSize',12);
-set(ax,'FontSize',17,'XTick',1:8,'XTickLabel',...
+set(ax,'FontSize',17,'XTick',1:length(subj_names),'XTickLabel',...
   string(subj_names),'YTick',0:10:100);
 set(ax,'interpreter','latex');
 ylim([0 100]);
