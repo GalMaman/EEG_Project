@@ -189,17 +189,20 @@ toc
 
 
 %% SVM histogram
-success_subj_PT = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
+success_subj_PT = plot_svm_hist(pca_vec_PT, dat_lengths, full_label_struct);
+% success_subj_PT = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 
 %% SVM histogram
-success_subj_mean = plot_svm_hist(cov_mat_mean, dat_lengths, full_label_struct);
+success_subj_mean = plot_svm_hist(pca_vec_MT, dat_lengths, full_label_struct);
+% success_subj_mean = plot_svm_hist(cov_mat_mean, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 
 %% SVM histogram
-success_subj_old = plot_svm_hist(cov_mat, dat_lengths, full_label_struct);
+success_subj_old = plot_svm_hist(pca_vec, dat_lengths, full_label_struct);
+% success_subj_old = plot_svm_hist(cov_mat, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 
@@ -238,15 +241,18 @@ ylim([0 100]);
 %% plot all
 ax = [];
 figure(); ax = gca;
+avg_vec = [mean(success_subj_old);mean(success_subj_mean);mean(success_subj_PT);mean(success_subj_ROT)];
 gr_bar = [success_subj_old success_subj_mean success_subj_PT success_subj_ROT];
 bar(gr_bar);
 ylabel('Success Percentage','interpreter','latex');
 xlabel('Test Subject','interpreter','latex');
 % title('Success Percentage','interpreter','latex');
-legend([{'Baseline - Riemannian Geometry'};{'MT'};{'PT'};{'PT and Rotation'}],'interpreter','latex');
+legend([{['Baseline - ' num2str(avg_vec(1)) '\%']};...
+    {['MT - ' num2str(avg_vec(2)) '\%']};{['PT - ' num2str(avg_vec(3)) '\%']};...
+    {['PT and Rotation - ' num2str(avg_vec(4)) '\%']}],'interpreter','latex');
 % set(ax,'FontSize',12);
 set(ax,'FontSize',17,'XTick',1:length(subj_names),'XTickLabel',...
-  string(subj_names),'YTick',0:10:100);
+  string((1:11)'),'YTick',0:10:100);
 set(ax,'interpreter','latex');
 ylim([0 100]);
 

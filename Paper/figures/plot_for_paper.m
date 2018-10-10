@@ -1,8 +1,8 @@
 %%
 close all
 clear
-dirPath  = 'C:\Users\User\Desktop\gal\Technion\EEG_Project\Paper\figures\data_2_10\8_Good_Subj_KNN\';
-fileName = '8subj.mat';
+dirPath  = 'C:\Users\User\Desktop\gal\Technion\EEG_Project\Paper\figures\figures_9_10\';
+fileName = '11subj.mat';
 load([dirPath, fileName]);
 
 figure_struct = cell(4,3);

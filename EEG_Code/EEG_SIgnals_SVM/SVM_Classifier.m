@@ -2,7 +2,7 @@ function [percentage] = SVM_Classifier(cov_mat,dat_lengths, full_label_struct, l
 
 
 [PCA_matrix, train_data, test_data, idx_test] = SVM_script_for_PCA(cov_mat', dat_lengths, full_label_struct, leave_out,1);
-data_for_testing                              = test_data(:,2:end);
+data_for_testing                              = test_data(:,2:5);
 
 
 % [trainedClassifier, ~] = LinSVM8Subj_trainClassifier(train_data);
@@ -10,14 +10,14 @@ data_for_testing                              = test_data(:,2:end);
 % % [trainedClassifier, ~] = LinSVM7Subj_trainClassifier(train_data);
 % [trainedClassifier, ~] = baggedTree_trainClassifier(train_data);
 % yfit              = trainedClassifier.predictFcn(data_for_testing);
-% % % 
-linaerSvmTemplate = templateSVM('Standardize', true);
-mdlLinearSVM      = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', linaerSvmTemplate);
-yfit              = mdlLinearSVM.predict(data_for_testing);
+%  
+% linaerSvmTemplate = templateSVM('Standardize', true);
+% mdlLinearSVM      = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', linaerSvmTemplate);
+% yfit              = mdlLinearSVM.predict(data_for_testing);
 
-% polSvmTemplate = templateSVM('Standardize', true, 'KernelFunction', 'polynomial','PolynomialOrder',3);
-% mdlPolySVM      = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', polSvmTemplate);
-% yfit              = mdlPolySVM.predict(data_for_testing);
+polSvmTemplate = templateSVM('Standardize', true, 'KernelFunction', 'polynomial','PolynomialOrder',3);
+mdlPolySVM      = fitcecoc(train_data(:,2:5), train_data(:,1), 'Learners', polSvmTemplate);
+yfit              = mdlPolySVM.predict(data_for_testing);
 
 % knnSvmTemplate    = templateKNN('NumNeighbors', 10);
 % mdlKnn            = fitcecoc(train_data(:,2:end), train_data(:,1), 'Learners', knnSvmTemplate);
