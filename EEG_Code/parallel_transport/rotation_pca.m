@@ -3,14 +3,16 @@ function [pca_vec_rot,angles] = rotation_pca(cov_mat, full_label_struct)
 
 num_sub      = unique(full_label_struct{2});
 subj_sutruct = cell(length(num_sub) , 4);
+figure;
 for ii = 1 : length(num_sub)
     idx                = find(full_label_struct{2} == num_sub(ii));
     subj_sutruct{ii,1} = cov_mat(:, idx);
 %     subj_sutruct{ii,2} = AlgoPCA(subj_sutruct{ii,1});
 %     subj_sutruct{ii,3} = subj_sutruct{ii,2}' * subj_sutruct{ii,1};
     [subj_sutruct{ii,2},subj_sutruct{ii,3},subj_sutruct{ii,4}] = AlgoPCA(subj_sutruct{ii,1});
+    plot(diag(subj_sutruct{ii,3})); hold on;
 end
-
+legend(num2str(num_sub));
 angles   = zeros(length(num_sub), size(subj_sutruct{1,2},2));
 sub_idx  = 1;
 vSub = setdiff(1:length(num_sub), sub_idx);

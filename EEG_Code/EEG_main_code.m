@@ -183,13 +183,13 @@ toc
 % end
 
 %% SVM histogram
-success_subj_ROT = plot_svm_hist(pca_vec_rot, dat_lengths, full_label_struct);
+success_subj_ROT = plot_svm_hist(pca_vec_rot, [], full_label_struct);
 disp('    --finished SVM Histogram');
 toc
 
 
 %% SVM histogram
-success_subj_PT = plot_svm_hist(pca_vec_PT, dat_lengths, full_label_struct);
+success_subj_PT = plot_svm_hist(pca_vec_PT, [], full_label_struct);
 % success_subj_PT = plot_svm_hist(cov_mat_PT_N, dat_lengths, full_label_struct);
 disp('    --finished SVM Histogram');
 toc
